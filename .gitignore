@@ -1,0 +1,10 @@
+dist/
+*.pyc
+__pycache__/
+.venv/
+.env/
+.pytest_cache
+notebooks/
+tests/
+mdtaim/__pycache__/
+.DS_Store

@@ -1,0 +1,527 @@
+2024-11-06 08:49:01,592 - mdtaim.utility - load_config - INFO - Config loaded successfully!
+2024-11-06 08:49:01,593 - mdtaim.utility - __init__ - INFO - current project config is: 
+-=itemset_mining_preparation=-: {'window_size': 10, 'ignore_win_smaller_than': 0.5, 'windowing_method': 'energy', 'enable_threshold_tuning': True, 'train_size': 150, 'threshold_tuning_step': 0.1, 'custom_threshold': 2, 'compare_to_train_for_detection': True, 'cut_baseline': False, 'quantile': 0.8, 'utility_function': 'max', 'keep_adj_util_diff_thr': 0.2, 'cons_trans_chk_for_merge': 5}
+-=spmf=-: {'algorithm': 'FPClose', 'min_support': '0.5%', 'max_support': '1%', 'min_support_count': 1, 'max_pattern_length': 3, 'min_pattern_length': 1, 'show_transaction_ids': False, 'high_utility_itemsets': False, 'min_utility': 1, 'empty_trans_replacement': 1000, 'sort_input_items': {'enable': True, 'ascending': True}, 'replace_zero': {'enable': True, 'replace_zero_with': 99}, 'jar_file': './lib/spmf.jar'}
+-=anomalyscoring=-: {'which': 'matrixprofile', 'matrixprofile': {'subsequence_length': 10, 'auto_subsequence_length': False}, 'iForest': {'num_trees': 100}}
+-=data=-: {'dataset_title': 'toy', 'dataset_file_name': 'toy_data.csv', 'dataset_gt_file_name': 'toy_data_GT.csv', 'ground_truth_type': 'range', 'dataset_path': './data/raw/toy/', 'spmf_output_path': './data/output/spmf/', 'final_output_path': './data/output/final/', 'processed_data_path': './data/processed/', 'transactions_path': './data/processed/saved_transactions/', 'scores_path': './data/processed/saved_scores/', 'transaction_db_path': './data/processed/transaction_databases/', 'label_pad_size': 10}
+-=logging=-: {'console_log_level': 'INFO', 'log_dir': './logs/', 'log_file_prefix': 'dev'}
+-=plot=-: {'output_path': './plots/'}
+2024-11-06 08:49:01,621 - mdtaim.utility - load_data - INFO - dataset toy_data.csv loaded successfully!
+2024-11-06 08:49:01,626 - mdtaim.utility - load_data - DEBUG - loaded dataset: 
+          0         1         2
+0  0.000000  0.000000  0.000000
+1  0.281733  0.281733  0.281733
+2  0.540641  0.540641  0.540641
+3  0.755750  0.755750  0.755750
+4  0.909632  0.909632  0.909632
+2024-11-06 08:49:01,628 - mdtaim.utility - load_data - INFO - ground truth toy_data_GT.csv loaded successfully!
+2024-11-06 08:49:01,631 - mdtaim.utility - load_data - DEBUG - loaded ground truth: 
+   0  1  2
+0  0  0  0
+1  0  0  0
+2  0  0  0
+3  0  0  0
+4  0  0  0
+2024-11-06 08:49:01,631 - mdtaim.utility - load_data - DEBUG - data shape: (1000, 3)
+2024-11-06 08:49:01,631 - mdtaim.utility - load_data - DEBUG - labels shape: (1000, 3)
+2024-11-06 08:49:02,146 - mdtaim.utility - load_data - INFO - anomaly rate of labels:0.068
+2024-11-06 08:49:02,146 - mdtaim.utility - pad_labels - DEBUG - pad_size: 10
+2024-11-06 08:49:02,146 - mdtaim.utility - pad_labels - DEBUG - intervals for column 0: [[190 223]
+ [505 538]]
+2024-11-06 08:49:02,146 - mdtaim.utility - pad_labels - DEBUG - intervals for column 0 after padding: [[180 232]
+ [495 547]]
+2024-11-06 08:49:02,147 - mdtaim.utility - pad_labels - DEBUG - intervals for column 1: [[190 223]
+ [505 538]]
+2024-11-06 08:49:02,147 - mdtaim.utility - pad_labels - DEBUG - intervals for column 1 after padding: [[180 232]
+ [495 547]]
+2024-11-06 08:49:02,147 - mdtaim.utility - pad_labels - DEBUG - intervals for column 2: [[505 538]
+ [785 818]]
+2024-11-06 08:49:02,147 - mdtaim.utility - pad_labels - DEBUG - intervals for column 2 after padding: [[495 547]
+ [775 827]]
+2024-11-06 08:49:02,147 - mdtaim.utility - load_data - INFO - anomaly rate of padded labels: 0.106
+2024-11-06 08:49:02,182 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 0 with given window size: 10
+2024-11-06 08:49:02,184 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 1 with given window size: 10
+2024-11-06 08:49:02,185 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 2 with given window size: 10
+2024-11-06 08:49:02,188 - mdtaim.utility - calculate_score - DEBUG - matrix profile shape is: (1000, 3) and its header is: 
+[[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+2024-11-06 08:49:02,189 - mdtaim.utility - save_to_pickle - INFO - matrix profile saved to file ./data/processed/saved_scores/mps.pkl successfully!
+2024-11-06 08:49:02,189 - mdtaim.utility - cal_anomaly_score - INFO - [1m[92mMP calculation done! total time to calculate Matrix Profile: 0.042 seconds[0m[0m
+2024-11-06 08:49:02,448 - mdtaim.utility - fast_find_anomalies - DEBUG - kdps shape: (1000, 3)
+2024-11-06 08:49:02,450 - mdtaim.utility - fast_find_anomalies - DEBUG - KDPs: [[0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.         0.        ]
+ [0.         0.38089084 1.25730409]
+ [0.         0.6964098  1.50441463]
+ [0.         0.96309855 2.43233526]
+ [0.         1.30938777 3.22900708]]
+2024-11-06 08:49:02,450 - mdtaim.utility - fast_find_anomalies - DEBUG - kdps_idx shape: (1000, 3)
+2024-11-06 08:49:02,451 - mdtaim.utility - fast_find_anomalies - DEBUG - KDPs_idx: [[0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [0 1 2]
+ [2 1 0]
+ [2 1 0]
+ [2 1 0]
+ [2 1 0]]
+2024-11-06 08:49:02,451 - mdtaim.utility - cal_kdp - INFO - [1m[92mKDP calculation done! total time to calculate KDP: 0.003 seconds[0m[0m
+2024-11-06 08:49:02,710 - mdtaim.utility - load_anomaly_scores - INFO - Anomaly Scores loaded successfully for itemset mining!
+2024-11-06 08:49:02,710 - mdtaim.utility - convert_anomalies_to_transactions - DEBUG - window size is 10 and number of windows (transactins) are: 100
+2024-11-06 08:49:02,710 - mdtaim.utility - convert_anomalies_to_transactions - INFO - Converting anomalies to transactions using [1m[91menergy[0m[0m method!
+2024-11-06 08:49:02,710 - mdtaim.utility - convert_energy - DEBUG - Training energy of dimensions: [0. 0. 0.]
+2024-11-06 08:49:02,711 - mdtaim.utility - convert_energy - INFO - No anomalies found in training data for threshold [1m[91m1.00[0m[0m! will use this threshold
+2024-11-06 08:49:02,712 - mdtaim.utility - convert_anomalies_to_transactions - INFO - Transactions were created successfully!
+2024-11-06 08:49:02,712 - mdtaim.utility - print_transactions - DEBUG - Dataset Transactions are: 
+Dataset Transactions are: 
+Transaction 1: Empty.
+Transaction 2: Empty.
+Transaction 3: Empty.
+Transaction 4: Empty.
+Transaction 5: Empty.
+Transaction 6: Empty.
+Transaction 7: Empty.
+Transaction 8: Empty.
+Transaction 9: Empty.
+Transaction 10: Empty.
+Transaction 11: Empty.
+Transaction 12: Empty.
+Transaction 13: Empty.
+Transaction 14: Empty.
+Transaction 15: Empty.
+Transaction 16: Empty.
+Transaction 17: Empty.
+Transaction 18: Empty.
+Transaction 19: Empty.
+Transaction 20: Anomaly(DIM:0, UTIL: 3.229007080810762):::Anomaly(DIM:1, UTIL: 1.309387770140446)
+Transaction 21: Anomaly(DIM:0, UTIL: 3.411067131897733):::Anomaly(DIM:1, UTIL: 1.0531882032272668)
+Transaction 22: Empty.
+Transaction 23: Empty.
+Transaction 24: Empty.
+Transaction 25: Empty.
+Transaction 26: Empty.
+Transaction 27: Empty.
+Transaction 28: Empty.
+Transaction 29: Empty.
+Transaction 30: Empty.
+Transaction 31: Empty.
+Transaction 32: Empty.
+Transaction 33: Empty.
+Transaction 34: Empty.
+Transaction 35: Empty.
+Transaction 36: Empty.
+Transaction 37: Empty.
+Transaction 38: Empty.
+Transaction 39: Empty.
+Transaction 40: Empty.
+Transaction 41: Empty.
+Transaction 42: Empty.
+Transaction 43: Empty.
+Transaction 44: Empty.
+Transaction 45: Empty.
+Transaction 46: Empty.
+Transaction 47: Empty.
+Transaction 48: Empty.
+Transaction 49: Empty.
+Transaction 50: Empty.
+Transaction 51: Empty.
+Transaction 52: Anomaly(DIM:0, UTIL: 1.1546194753592725):::Anomaly(DIM:1, UTIL: 1.8944663255291028):::Anomaly(DIM:2, UTIL: 3.4032061233377497)
+Transaction 53: Anomaly(DIM:0, UTIL: 0.7489305283404697):::Anomaly(DIM:1, UTIL: 1.2247652443961152):::Anomaly(DIM:2, UTIL: 1.9019671662192297)
+Transaction 54: Empty.
+Transaction 55: Empty.
+Transaction 56: Empty.
+Transaction 57: Empty.
+Transaction 58: Empty.
+Transaction 59: Empty.
+Transaction 60: Empty.
+Transaction 61: Empty.
+Transaction 62: Empty.
+Transaction 63: Empty.
+Transaction 64: Empty.
+Transaction 65: Empty.
+Transaction 66: Empty.
+Transaction 67: Empty.
+Transaction 68: Empty.
+Transaction 69: Empty.
+Transaction 70: Empty.
+Transaction 71: Empty.
+Transaction 72: Empty.
+Transaction 73: Empty.
+Transaction 74: Empty.
+Transaction 75: Empty.
+Transaction 76: Empty.
+Transaction 77: Empty.
+Transaction 78: Empty.
+Transaction 79: Empty.
+Transaction 80: Anomaly(DIM:2, UTIL: 1.9894288664413253)
+Transaction 81: Anomaly(DIM:2, UTIL: 1.4129386620249267)
+Transaction 82: Empty.
+Transaction 83: Empty.
+Transaction 84: Empty.
+Transaction 85: Empty.
+Transaction 86: Empty.
+Transaction 87: Empty.
+Transaction 88: Empty.
+Transaction 89: Empty.
+Transaction 90: Empty.
+Transaction 91: Empty.
+Transaction 92: Empty.
+Transaction 93: Empty.
+Transaction 94: Empty.
+Transaction 95: Empty.
+Transaction 96: Empty.
+Transaction 97: Empty.
+Transaction 98: Empty.
+Transaction 99: Empty.
+Transaction 100: Empty.
+2024-11-06 08:49:02,713 - mdtaim.utility - merge_batch - DEBUG - merge table: 
+Header: [0 0 1] 
+Row 0: [20 entry(exist=1, utility=3.229007080810762)
+ entry(exist=1, utility=1.309387770140446)]
+Row 1: [21 entry(exist=1, utility=3.411067131897733)
+ entry(exist=1, utility=1.0531882032272668)]
+Summary: [0 2 2]
+2024-11-06 08:49:02,713 - mdtaim.utility - merge_batch - DEBUG - Detected max utility transaction windows: [21, 20] on dimension: 0
+2024-11-06 08:49:02,713 - mdtaim.utility - merge_batch - DEBUG - Detected max utility transaction windows: [20, 21] on dimension: 1
+2024-11-06 08:49:02,713 - mdtaim.utility - merge_consecutive_anomalies - DEBUG - will jump to 21 transaction: 22 after this number of transactions: 2
+2024-11-06 08:49:02,713 - mdtaim.utility - merge_batch - DEBUG - merge table: 
+Header: [0 0 1 2] 
+Row 0: [52 entry(exist=1, utility=1.1546194753592725)
+ entry(exist=1, utility=1.8944663255291028)
+ entry(exist=1, utility=3.4032061233377497)]
+Row 1: [53 entry(exist=1, utility=0.7489305283404697)
+ entry(exist=1, utility=1.2247652443961152)
+ entry(exist=1, utility=1.9019671662192297)]
+Summary: [0 2 2 2]
+2024-11-06 08:49:02,713 - mdtaim.utility - merge_batch - DEBUG - Detected max utility transaction windows: [52, 53] on dimension: 0
+2024-11-06 08:49:02,714 - mdtaim.utility - remove_anomaly_except_dim - DEBUG - removing anomaly on dimension: 0 from transaction: 53
+2024-11-06 08:49:02,714 - mdtaim.utility - merge_batch - DEBUG - Detected max utility transaction windows: [52, 53] on dimension: 1
+2024-11-06 08:49:02,714 - mdtaim.utility - remove_anomaly_except_dim - DEBUG - removing anomaly on dimension: 1 from transaction: 53
+2024-11-06 08:49:02,714 - mdtaim.utility - merge_batch - DEBUG - Detected max utility transaction windows: [52, 53] on dimension: 2
+2024-11-06 08:49:02,714 - mdtaim.utility - remove_anomaly_except_dim - DEBUG - removing anomaly on dimension: 2 from transaction: 53
+2024-11-06 08:49:02,714 - mdtaim.utility - merge_consecutive_anomalies - DEBUG - will jump to 53 transaction: 54 after this number of transactions: 2
+2024-11-06 08:49:02,714 - mdtaim.utility - merge_batch - DEBUG - merge table: 
+Header: [0 2] 
+Row 0: [80 entry(exist=1, utility=1.9894288664413253)]
+Row 1: [81 entry(exist=1, utility=1.4129386620249267)]
+Summary: [0 2]
+2024-11-06 08:49:02,714 - mdtaim.utility - merge_batch - DEBUG - Detected max utility transaction windows: [80, 81] on dimension: 2
+2024-11-06 08:49:02,714 - mdtaim.utility - remove_anomaly_except_dim - DEBUG - removing anomaly on dimension: 2 from transaction: 81
+2024-11-06 08:49:02,714 - mdtaim.utility - merge_consecutive_anomalies - DEBUG - will jump to 81 transaction: 82 after this number of transactions: 2
+2024-11-06 08:49:02,714 - mdtaim.utility - merge_consecutive_anomalies - INFO - consecutive anomalies merged successfully!
+2024-11-06 08:49:02,714 - mdtaim.utility - print_transactions - DEBUG - Dataset Transactions are: 
+Dataset Transactions are: 
+Transaction 1: Empty.
+Transaction 2: Empty.
+Transaction 3: Empty.
+Transaction 4: Empty.
+Transaction 5: Empty.
+Transaction 6: Empty.
+Transaction 7: Empty.
+Transaction 8: Empty.
+Transaction 9: Empty.
+Transaction 10: Empty.
+Transaction 11: Empty.
+Transaction 12: Empty.
+Transaction 13: Empty.
+Transaction 14: Empty.
+Transaction 15: Empty.
+Transaction 16: Empty.
+Transaction 17: Empty.
+Transaction 18: Empty.
+Transaction 19: Empty.
+Transaction 20: Anomaly(DIM:0, UTIL: 3.229007080810762):::Anomaly(DIM:1, UTIL: 1.309387770140446)
+Transaction 21: Anomaly(DIM:0, UTIL: 3.411067131897733):::Anomaly(DIM:1, UTIL: 1.0531882032272668)
+Transaction 22: Empty.
+Transaction 23: Empty.
+Transaction 24: Empty.
+Transaction 25: Empty.
+Transaction 26: Empty.
+Transaction 27: Empty.
+Transaction 28: Empty.
+Transaction 29: Empty.
+Transaction 30: Empty.
+Transaction 31: Empty.
+Transaction 32: Empty.
+Transaction 33: Empty.
+Transaction 34: Empty.
+Transaction 35: Empty.
+Transaction 36: Empty.
+Transaction 37: Empty.
+Transaction 38: Empty.
+Transaction 39: Empty.
+Transaction 40: Empty.
+Transaction 41: Empty.
+Transaction 42: Empty.
+Transaction 43: Empty.
+Transaction 44: Empty.
+Transaction 45: Empty.
+Transaction 46: Empty.
+Transaction 47: Empty.
+Transaction 48: Empty.
+Transaction 49: Empty.
+Transaction 50: Empty.
+Transaction 51: Empty.
+Transaction 52: Anomaly(DIM:0, UTIL: 1.1546194753592725):::Anomaly(DIM:1, UTIL: 1.8944663255291028):::Anomaly(DIM:2, UTIL: 3.4032061233377497)
+Transaction 53: Empty.
+Transaction 54: Empty.
+Transaction 55: Empty.
+Transaction 56: Empty.
+Transaction 57: Empty.
+Transaction 58: Empty.
+Transaction 59: Empty.
+Transaction 60: Empty.
+Transaction 61: Empty.
+Transaction 62: Empty.
+Transaction 63: Empty.
+Transaction 64: Empty.
+Transaction 65: Empty.
+Transaction 66: Empty.
+Transaction 67: Empty.
+Transaction 68: Empty.
+Transaction 69: Empty.
+Transaction 70: Empty.
+Transaction 71: Empty.
+Transaction 72: Empty.
+Transaction 73: Empty.
+Transaction 74: Empty.
+Transaction 75: Empty.
+Transaction 76: Empty.
+Transaction 77: Empty.
+Transaction 78: Empty.
+Transaction 79: Empty.
+Transaction 80: Anomaly(DIM:2, UTIL: 1.9894288664413253)
+Transaction 81: Empty.
+Transaction 82: Empty.
+Transaction 83: Empty.
+Transaction 84: Empty.
+Transaction 85: Empty.
+Transaction 86: Empty.
+Transaction 87: Empty.
+Transaction 88: Empty.
+Transaction 89: Empty.
+Transaction 90: Empty.
+Transaction 91: Empty.
+Transaction 92: Empty.
+Transaction 93: Empty.
+Transaction 94: Empty.
+Transaction 95: Empty.
+Transaction 96: Empty.
+Transaction 97: Empty.
+Transaction 98: Empty.
+Transaction 99: Empty.
+Transaction 100: Empty.
+2024-11-06 08:49:02,715 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 20 and dimension 0. win start: 200 and win end: 210 label start: 180 and label end: 232
+2024-11-06 08:49:02,715 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 20 and dimension 1. win start: 200 and win end: 210 label start: 180 and label end: 232
+2024-11-06 08:49:02,715 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 21 and dimension 0. win start: 210 and win end: 220 label start: 180 and label end: 232
+2024-11-06 08:49:02,715 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 21 and dimension 1. win start: 210 and win end: 220 label start: 180 and label end: 232
+2024-11-06 08:49:02,715 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 52 and dimension 0. win start: 520 and win end: 530 label start: 495 and label end: 547
+2024-11-06 08:49:02,715 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 52 and dimension 1. win start: 520 and win end: 530 label start: 495 and label end: 547
+2024-11-06 08:49:02,715 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 52 and dimension 2. win start: 520 and win end: 530 label start: 495 and label end: 547
+2024-11-06 08:49:02,715 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 80 and dimension 2. win start: 800 and win end: 810 label start: 775 and label end: 827
+2024-11-06 08:49:02,715 - mdtaim.utility - cal_anomaly_detec_accuracy - INFO - number of matches: [1m[92m8[0m[0m out of [1m[92m8[0m[0m detected anomalies for [1m[92m6[0m[0m labels
+2024-11-06 08:49:02,715 - mdtaim.utility - cal_anomaly_detec_accuracy - INFO - Precision: 1.0, Recall: 1.3333333333333333, F1 Score: 1.1428571428571428
+2024-11-06 08:49:02,716 - mdtaim.utility - save_transactions_to_file - INFO - current transactions saved to pickle successfully!
+2024-11-06 08:49:02,717 - mdtaim.utility - load_transactions_from_file - INFO - transaction DB loaded successfully!
+2024-11-06 08:49:02,717 - mdtaim.utility - prepare_transaction_database - INFO - Transaction DB written to file successfully!
+2024-11-06 08:49:02,717 - mdtaim.utility - merge_identicals - WARNING - Merged two identical rows in transaction DB file: 1 99 and 1 99
+2024-11-06 08:49:03,404 - mdtaim.utility - check_java_version - INFO - Found Java version: 21, going on...
+2024-11-06 08:49:03,412 - mdtaim.utility - run_algorithm - INFO - Running SPMF: [4m[91mFPClose[0m[0m algorithm with the command java -jar ./lib/spmf.jar run FPClose ./data/processed/transaction_databases/corrected_context.txt ./data/output/spmf/FPClose_toy_out.txt 0.5%...
+2024-11-06 08:49:03,737 - mdtaim.utility - run_algorithm - DEBUG - Time taken to run FPClose command: 0.3314 seconds
+2024-11-06 08:49:03,737 - mdtaim.utility - run_algorithm - INFO - SPMF Output:
+>/Volumes/develop/MsThesis/MDTAIM/lib/spmf.jar
+=============  FP-Close v0.96r14  - STATS =============
+ Transactions count from database : 100
+ Max memory usage: 9.911445617675781 mb 
+ Closed frequent itemset count : 4
+ Total time ~ 6 ms
+===================================================
+
+2024-11-06 08:49:03,737 - mdtaim.utility - perform_itemset_mining - INFO - [1m[92mMP conversion to transactions took 0.004 seconds and SPMF execution took 1.019 seconds[0m[0m
