@@ -7,5 +7,6 @@ __pycache__/
 notebooks/
 tests/
 logs/
+plots/
 mdtaim/__pycache__/
 .DS_Store
