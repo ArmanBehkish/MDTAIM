@@ -6,5 +6,6 @@ __pycache__/
 .pytest_cache
 notebooks/
 tests/
+logs/
 mdtaim/__pycache__/
 .DS_Store

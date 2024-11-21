@@ -58,14 +58,12 @@ class PostProcess:
             + ".csv"
         )
 
-        # if algorithm is not maximal/closed, scan the database to reduce output to maximal/closed patterns
-
-        # for now only using maximal/closed algoeithms
-
-        if tid_enabled:
-            # for algorithms that return TIDs (do we have a high utility itemset with TIDS?)
+        if tid_enabled and not high_util_enabled:
+            # for algorithms that return TIDs w/o utilities
+            # i.e., AprioriTID_Bitset and alike
             with open(spmf_output_f, "r") as s_f, open(tran_db_f, "r") as t_f:
                 for line in s_f:
+                    # extract SPMF output
                     supp = int(line.split("#SUP:")[1].split("#TID:")[0].strip())
                     tids = [
                         int(tid) + 1 for tid in line.split("#TID:")[1].split(" ")[1:]
@@ -73,14 +71,42 @@ class PostProcess:
                     dims = [x for x in line.split("#SUP:")[0].split(" ") if x]
                     self.itemsets[frozenset(dims)] = [supp, 0, tids]
 
+                # keep only KDAa which appeared in the transaction database
+                kdas_in_db = []
+                for count, line in enumerate(t_f, start=1):
+                    if line.strip() == str(empty_trans_replacement):
+                        continue
+                    else:
+                        kdas_in_db.append(frozenset(line.strip().split(" ")))
+
+                self.itemsets = {
+                    k: v for k, v in self.itemsets.items() if k in kdas_in_db
+                }
+
+                # sort base on TIDs
+                # sort base on Utilities, then TIDs
+                self.itemsets = dict(
+                    sorted(
+                        self.itemsets.items(),
+                        key=lambda x: (x[1][1], x[1][2][0]),
+                    )
+                )
+
+            self.logger.debug(
+                f"finalized itemsets after TIDs/NO UTILs: {self.itemsets}!"
+            )
+
         if not tid_enabled and not high_util_enabled:
-            # find TIDs for each frequent itemset
+            # i.e., Apriori. and alike
+
             with open(spmf_output_f, "r") as s_f, open(tran_db_f, "r") as t_f:
                 for line in s_f:
+                    # extract SPMF output
                     supp = int(line.split("#SUP:")[1].strip())
                     dims = [x for x in line.split("#SUP:")[0].split(" ") if x]
                     self.itemsets[frozenset(dims)] = [supp, 0, []]
 
+                # find TIDs for each frequent itemset
                 for count, line in enumerate(t_f, start=1):
                     if line.strip() == str(empty_trans_replacement):
                         continue
@@ -102,9 +128,12 @@ class PostProcess:
                     sorted(self.itemsets.items(), key=lambda x: x[1][2][0])
                 )
 
-        self.logger.debug(f"itemsets after no tids and no utils: {self.itemsets}")
+            self.logger.debug(
+                f"finalized itemsets after NO TIDS/NO UTILs: {self.itemsets}!"
+            )
 
         if not tid_enabled and high_util_enabled:
+            # i.e., AprioriTID_Bitset and alike
             # find TIDS for each high utility itemset
             with open(spmf_output_f, "r") as s_f, open(tran_db_f, "r") as t_f:
                 for line in s_f:
@@ -135,6 +164,10 @@ class PostProcess:
                     self.itemsets.items(),
                     key=lambda x: (x[1][1], x[1][2][0]),
                 )
+            )
+
+            self.logger.debug(
+                f"finalized itemsets after NO TIDS/with UTILs: {self.itemsets}!"
             )
 
         # replace zero replacement with 0
