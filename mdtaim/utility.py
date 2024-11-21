@@ -7,6 +7,8 @@ import os
 from datetime import datetime
 import yaml
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import numpy as np
 from typing import Optional, Dict, Any
 
@@ -215,3 +217,117 @@ def md_plot(
         )
     if show_plot:
         plt.show()
+
+
+def plot_plotly(
+    data: np.ndarray,
+    labels: np.ndarray,
+    logger: logging.Logger,
+    plot_config: Dict[str, Any],
+    title: str = "result",
+    message: str = "",
+    save_plot: bool = True,
+    show_plot: bool = False,
+    line_color: str = "gray",
+    y_common_range: bool = True,
+    name: str = "TS",
+    subplot_size: int = 100,
+) -> None:
+
+    from mdtaim.processdata import PreprocessData
+
+    global_min = np.min(data)
+    global_max = np.max(data)
+
+    subplot_bgcolor = "white"
+    line_colors = ["lightgray", "gray", "darkgray", "dimgray", "slategray"]
+
+    fig = make_subplots(
+        rows=data.shape[0],
+        cols=1,
+        shared_xaxes=True,
+        vertical_spacing=0.005,
+        # vertical_spacing=0.5,
+    )
+
+    for i, ts in enumerate(data, start=1):
+        fig.add_trace(
+            go.Scatter(
+                x=np.arange(data.shape[1]),
+                y=ts,
+                mode="lines",
+                name=f"Time Series {i-1}",
+                showlegend=False,
+                line=dict(color=line_colors[i % len(line_colors)]),
+            ),
+            row=i,
+            col=1,
+        )
+        # Add annotation (label) to the right of each subplot
+        fig.add_annotation(
+            text=f"{name}{i-1}" if name != "KDP" else f"{i} DP",
+            xref=f"x{i+1} domain",
+            yref=f"y{i+1} domain",
+            x=1.003,
+            y=0.5,
+            showarrow=False,
+            font=dict(size=15),
+            xanchor="left",
+            yanchor="middle",
+            row=i,
+            col=1,
+        )
+        if y_common_range:
+            fig.update_yaxes(range=[global_min, global_max], row=i, col=1)
+
+        fig.update_yaxes(
+            showgrid=False,
+            gridwidth=1,
+            gridcolor="lightgray",
+            zeroline=True,
+            zerolinewidth=1,
+            zerolinecolor="black",
+            row=i,
+            col=1,
+            color="black",
+        )
+        fig.update_xaxes(
+            showgrid=True,
+            gridwidth=1,
+            gridcolor="lightgray",
+            zeroline=True,
+            zerolinewidth=2,
+            zerolinecolor="lightgray",
+            row=i,
+            col=1,
+            color="black",
+        )
+
+        this_lbls = np.asarray(PreprocessData.get_state_intervals(labels[:, i - 1])[1])
+        for label in this_lbls:
+            fig.add_shape(
+                type="rect",
+                x0=label[0],
+                x1=label[1],
+                y0=global_min,
+                y1=global_max,
+                xref=f"x{i}",
+                yref=f"y{i}",
+                fillcolor="yellow",
+                opacity=0.85,
+                layer="below",
+                line_width=0,
+                row=i,
+                col=1,
+            )
+
+    fig.update_layout(
+        plot_bgcolor=subplot_bgcolor,
+        height=data.shape[0] * subplot_size,
+        title=message,
+    )
+    if show_plot:
+        fig.show()
+    if save_plot:
+        fig.write_html(plot_config["output_path"] + f"{title}.html")
+        # fig.write_image(plot_config["output_path"] + f"{title}.jpeg")

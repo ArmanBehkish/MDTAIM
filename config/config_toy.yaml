@@ -1,25 +1,25 @@
 itemset_mining_preparation:
   window_size: 10
   ignore_win_smaller_than: 0.5 # percentage of window size
-  windowing_method: energy  #implemented methods: mean-max, mean-std, mean-mean, energy, eucl_dist, n_peaks
+  windowing_method: eucl_zero_shot  #implemented methods: mean-max, mean-std, mean-mean, energy, range, eucl_dist,eucl_zero_shot, n_peaks
+  enable_threshold_tuning: True # if True, use train part of data to 
   enable_threshold_tuning: True # if True, use train part of data to find the best threshold (zero-shot learning)
   train_size: 150
-  threshold_tuning_step: 0.1 # start from one and step up by this
+  threshold_tuning_step: 0.2 # start from one and step up by this
   custom_threshold: 2  # not used if threshold tuning is enabled
   compare_to_train_for_detection: True  #use parameters (e.g., mean) calculated across train data as base as ooposed to the whole data
   cut_baseline: False  # cut quantile of ....
   quantile: 0.8
   utility_function: max  # implemented: max, sum
-  keep_adj_util_diff_thr: .2   # anomalies with utility difference less than this will be kept (not merged)
-  cons_trans_chk_for_merge: 5   # number of consecutive anomalies to check for merging (into one with higher utility)
+  cons_trans_chk_for_merge: 4   # number of consecutive anomalies to check for merging (into one with higher utility)
 spmf:
-  algorithm: FPClose # from: Apriori, FPGrowth_itemsets,AprioriTID_Bitset,Eclat,dEclat,HMine,FIN,DFIN,NegFIN,PrePost+,PrePost,LCMFreq,AprioriClose,DCI_Closed,Charm_bitset,LCM,FPClose,NAFCP,NEclatClosed,FPMax,Charm_MFI,DefMe,Pascal,Zart,AprioriRare,Two-Phase,FHM, EFIM,CHUI-MinerMax,AprioriInverse,AprioriInverse_TID
+  algorithm: Apriori # from: Apriori, FPGrowth_itemsets,AprioriTID_Bitset,Eclat,dEclat,HMine,FIN,DFIN,NegFIN,PrePost+,PrePost,LCMFreq,AprioriClose,DCI_Closed,Charm_bitset,LCM,FPClose,NAFCP,NEclatClosed,FPMax,Charm_MFI,DefMe,Pascal,Zart,AprioriRare,Two-Phase,FHM, EFIM,CHUI-MinerMax,AprioriInverse,AprioriInverse_TID
   min_support: 0.5%
   max_support: 1% # for AprioriInverse
   min_support_count: 1 # for algos that expect integer support count
   max_pattern_length: 3
   min_pattern_length: 1
-  show_transaction_ids: False
+  show_transaction_ids: False  #for algorithms that return TIDs
   high_utility_itemsets: False # For high utility mining algos
   min_utility: 1 # for high utility mining algos
   empty_trans_replacement: 1000 # algos expect at least one item in each transaction
@@ -57,3 +57,4 @@ logging:
   log_file_prefix: dev
 plot:
   output_path: ./plots/
+  subplot_size: 160

@@ -5,6 +5,12 @@
 
 os.system(f"java -jar spmf.jar run Apriori ./inputs/corrected.in ./outputs/out.out {minsup}")
 
+  show_transaction_ids: False  
+  high_utility_itemsets: False 
+  Time: 
+    MSCRED: 28+11
+
+
 ---
 ## AprioriTID_Bitset 
 ### show_transaction_ids 

@@ -1,7 +1,7 @@
 itemset_mining_preparation:
   window_size: 250    # must be divisor of dataset size
   ignore_win_smaller_than: 0.5 # percentage of window size
-  windowing_method: energy   #implemented methods: mean-max, mean-std, mean-mean, energy, eucl_dist, n_peaks
+  windowing_method: energy  #implemented methods: mean-max, mean-std, mean-mean, energy, range, eucl_dist,eucl_zero_shot, n_peaks
   enable_threshold_tuning: True # if True, use train part of data to find the best threshold (zero-shot)
   train_size: 10_000
   threshold_tuning_step: 0.1
@@ -10,8 +10,7 @@ itemset_mining_preparation:
   cut_baseline: False
   quantile: 0.8
   utility_function: max
-  keep_adj_util_diff_thr: 0.1
-  cons_trans_chk_for_merge: 5
+  cons_trans_chk_for_merge: 5  # number of consecutive anomalies to check for merging (into one with higher utility)
 spmf:
   algorithm: CHUI-MinerMax # from: Apriori, FPGrowth_itemsets,AprioriTID_Bitset,Eclat,dEclat,HMine,FIN,DFIN,NegFIN,PrePost+,PrePost,LCMFreq,AprioriClose,DCI_Closed,Charm_bitset,LCM,FPClose,NAFCP,NEclatClosed,FPMax,Charm_MFI,DefMe,Pascal,Zart,AprioriRare,Two-Phase,FHM, EFIM,CHUI-MinerMax,AprioriInverse,AprioriInverse_TID
   min_support: 0.5%
@@ -19,7 +18,7 @@ spmf:
   min_support_count: 1 # for algos that expect integer support count
   max_pattern_length: 3
   min_pattern_length: 1
-  show_transaction_ids: False
+  show_transaction_ids: False  #for algorithms that return TIDs
   high_utility_itemsets: True # For high utility mining algos
   min_utility: 1 # for high utility mining algos
   empty_trans_replacement: 1000 # algos expect at least one item in each transaction
@@ -57,3 +56,4 @@ logging:
   log_file_prefix: dev
 plot:
   output_path: ./plots/
+  subplot_size: 50

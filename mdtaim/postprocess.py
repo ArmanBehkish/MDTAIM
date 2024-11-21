@@ -1,5 +1,9 @@
+from typing import Dict, List, Optional
 import logging
 import os
+import numpy as np
+import pandas as pd
+import plotly.graph_objects as go
 from .config import Config
 from .utility import bold, underline, green, blue, red
 from .processdata import PreprocessData
@@ -7,19 +11,20 @@ from .processdata import PreprocessData
 
 class PostProcess:
     """
-    Postprocess the output of the SPMF algorithms to produce the output of the MDTAIM pipeline
+    processes the output of the SPMF algorithms to produce the output of the MDTAIM pipeline
     """
 
     def __init__(self, config: Config, logger: logging.Logger) -> None:
         self.config = config
         self.logger = logger
-        self.itemsets: dict[set[int], list[int]] = {}
+        # Itemsets : {frozenset(dimensions) : [support, utility, [tids]]}
+        self.itemsets: Dict[frozenset[int], List[int]] = {}
 
     def produce_output(self):
         """
-        if the algorithm does not return TIDs, find them
-        sort the KDAs based on the utility and TIDs
-        save the output file
+        if the algorithm does not return TIDs, finds them!
+        sorts the KDAs based on the utility and TIDs
+        saves the output file
         """
         itemset_config = self.config.get_config()["itemset_mining_preparation"]
         spmf_config = self.config.get_config()["spmf"]
@@ -29,7 +34,7 @@ class PostProcess:
         tid_enabled = spmf_config["show_transaction_ids"]
         win_size = itemset_config["window_size"]
         empty_trans_replacement = spmf_config["empty_trans_replacement"]
-        zero_replace = (
+        zero_replacement = (
             spmf_config["replace_zero"]["replace_zero_with"]
             if spmf_config["replace_zero"]["enable"]
             else None
@@ -65,7 +70,7 @@ class PostProcess:
                     tids = [
                         int(tid) + 1 for tid in line.split("#TID:")[1].split(" ")[1:]
                     ]
-                    dims = line.split("#SUP:")[0].split(" ")[:-1]
+                    dims = [x for x in line.split("#SUP:")[0].split(" ") if x]
                     self.itemsets[frozenset(dims)] = [supp, 0, tids]
 
         if not tid_enabled and not high_util_enabled:
@@ -73,7 +78,7 @@ class PostProcess:
             with open(spmf_output_f, "r") as s_f, open(tran_db_f, "r") as t_f:
                 for line in s_f:
                     supp = int(line.split("#SUP:")[1].strip())
-                    dims = line.split("#SUP:")[0].split(" ")[:-1]
+                    dims = [x for x in line.split("#SUP:")[0].split(" ") if x]
                     self.itemsets[frozenset(dims)] = [supp, 0, []]
 
                 for count, line in enumerate(t_f, start=1):
@@ -90,12 +95,14 @@ class PostProcess:
                             # first occurrence of itemset, add tid
                             self.itemsets[frozenset(dimensions)][2].append(tid)
 
-                # remove KDAa which did not appear in a specific place in the
+                # remove KDAa which did not appear in a specific place in the transactions
                 self.itemsets = {k: v for k, v in self.itemsets.items() if v[2]}
                 # sort base on TIDs
                 self.itemsets = dict(
                     sorted(self.itemsets.items(), key=lambda x: x[1][2][0])
                 )
+
+        self.logger.debug(f"itemsets after no tids and no utils: {self.itemsets}")
 
         if not tid_enabled and high_util_enabled:
             # find TIDS for each high utility itemset
@@ -103,7 +110,7 @@ class PostProcess:
                 for line in s_f:
                     supp = line.split("#SUP:")[1].strip().split("#UTIL:")[0].strip()
                     util = line.split("#UTIL:")[1].strip()
-                    dims = line.split("#SUP:")[0].split(" ")[:-2]
+                    dims = [x for x in line.split("#SUP:")[0].split(" ") if x]
                     self.itemsets[frozenset(dims)] = [supp, util, []]
 
                 for count, line in enumerate(t_f, start=1):
@@ -130,6 +137,14 @@ class PostProcess:
                 )
             )
 
+        # replace zero replacement with 0
+        for keys, value in list(self.itemsets.items()):
+            new_keys = frozenset(
+                key if int(key) != int(zero_replacement) else 0 for key in keys
+            )
+            del self.itemsets[keys]
+            self.itemsets[new_keys] = value
+
         # save output file
         with open(final_output_f, "w", encoding="utf-8") as f:
             # write header
@@ -154,50 +169,119 @@ class PostProcess:
                         + "\n"
                     )
 
-    # def plot(
-    #     self,
-    #     regimes=None,
-    #     each_tag_thrs=None,
-    #     title: str = "KDP_Profile",
-    #     plot_box: bool = True,
-    #     save_plot: bool = True,
-    #     idx_tag_name: int = 0,
-    #     idx_name: int = 0,
-    #     idx_string: str = None,
-    #     line_color: str = "black",
-    #     label_type: Optional[str] = "padded",
-    #     labels: np.ndarray = None,
-    #     show_plot: bool = False,
-    # ):
-    #     """Plot the output of the MDTAIM pipeline"""
+    def plot_heatmap(
+        self,
+        title: str = "MDTAIM",
+        save_plot: bool = True,
+        line_color: str = "gray",
+        label_type: Optional[str] = "normal",
+        show_plot: bool = True,
+        labels: np.ndarray = np.empty((0, 0), dtype=np.float64),
+    ):
+        itemset_config = self.config.get_config()["itemset_mining_preparation"]
+        spmf_config = self.config.get_config()["spmf"]
+        high_util_enabled = spmf_config["high_utility_itemsets"]
+        dataset_title = self.config.get_config()["data"]["dataset_title"]
+        plot_config = self.config.get_config()["plot"]
+        win_size = itemset_config["window_size"]
+        title = (
+            dataset_title
+            + " - "
+            + "Multidimensional Anomalies along with their Locations and relative importance."
+        )
+        box_size = 50
 
-    #     plot_config = self.config.get_config()["plot"]
+        # Create initial DataFrame from itemsets: : {frozenset(dimensions) : [support, utility, [tids]]}
+        df = pd.DataFrame(
+            {
+                "KDA": [
+                    ",".join(sorted(str(x) for x in dims))
+                    for dims in self.itemsets.keys()
+                ],
+                "Location": [
+                    tids[0] * win_size for _, _, tids in self.itemsets.values()
+                ],
+                "Importance": [
+                    float(utility) for _, utility, _ in self.itemsets.values()
+                ],
+            }
+        )
 
-    #     if label_type == "padded":
-    #         title = title + "_Padded_Labels"
+        # Add dimension count and sort DataFrame
+        df["dim_count"] = df["KDA"].str.count(",") + 1
+        df = df.sort_values(["dim_count"], ascending=[False])
 
-    #     if self.itemsets is None:
-    #         self.logger.error("KDAs  not Provided or Loaded!")
-    #         raise ValueError("Data or labels are not loaded!")
+        self.logger.debug(f"data frame created for heatmap: {df}\n")
 
-    #     kdas = list(self.itemsets.keys())
-    #     kd_labels = PreprocessData.make_kd_labels(self, labels)
-    #     name = "KDP"
+        # Create the heatmap using a scatter plot with square markers
+        fig = go.Figure()
 
-    #     md_plot(
-    #         kdas,
-    #         kd_labels,
-    #         self.logger,
-    #         plot_config,
-    #         regimes,
-    #         each_tag_thrs,
-    #         title,
-    #         plot_box,
-    #         save_plot,
-    #         idx_tag_name,
-    #         idx_name,
-    #         idx_string,
-    #         line_color=line_color,
-    #         show_plot=show_plot,
-    #         name=name,
-    #     )
+        if not high_util_enabled:
+            fig.add_trace(
+                go.Scatter(
+                    x=df["Location"],
+                    y=df["KDA"],
+                    mode="markers",
+                    marker=dict(
+                        size=box_size,
+                        color="black",
+                        symbol="triangle-down",
+                    ),
+                    showlegend=False,
+                )
+            )
+
+        if high_util_enabled:
+            # create text colors adaptive based on marker color
+            min_imp = df["Importance"].min()
+            max_imp = df["Importance"].max()
+            df["norm_imp"] = (df["Importance"] - min_imp) / (max_imp - min_imp)
+            text_colors = ["black" if x > 0.5 else "white" for x in df["norm_imp"]]
+
+            # Add scatter plot with text labels
+            fig.add_trace(
+                go.Scatter(
+                    x=df["Location"],
+                    y=df["KDA"],
+                    mode="markers+text",
+                    text=df["Importance"].round(1),
+                    textposition="middle center",
+                    textfont=dict(
+                        color=text_colors,
+                        size=12,
+                    ),
+                    marker=dict(
+                        size=box_size,
+                        color=df["Importance"],
+                        colorscale="Viridis",
+                        showscale=True,
+                        colorbar=dict(title="Importance"),
+                        symbol="triangle-down",
+                    ),
+                    showlegend=False,
+                )
+            )
+
+        fig.update_layout(
+            title=title,
+            xaxis_title="Location",
+            yaxis=dict(
+                ticktext=df["KDA"].tolist(),
+                tickvals=list(range(len(df))),
+                title="KDA",
+                showticklabels=True,
+                automargin=True,
+                side="left",
+                tickmode="array",
+                ticklabelposition="outside",
+                tickangle=0,
+            ),
+            xaxis=dict(side="bottom"),
+            height=max(400, 150 * len(df)),
+        )
+
+        if show_plot:
+            fig.show()
+
+        if save_plot:
+            fig.write_html(f"{plot_config['output_path']}/{dataset_title}_heatmap.html")

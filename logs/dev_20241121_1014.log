@@ -1,0 +1,480 @@
+2024-11-21 10:14:03,129 - mdtaim.utility - load_config - INFO - Config loaded successfully!
+2024-11-21 10:14:03,130 - mdtaim.utility - __init__ - INFO - current project config is: 
+-=itemset_mining_preparation=-: {'window_size': 250, 'ignore_win_smaller_than': 0.5, 'windowing_method': 'energy', 'enable_threshold_tuning': True, 'train_size': 10000, 'threshold_tuning_step': 0.1, 'custom_threshold': 2, 'compare_to_train_for_detection': True, 'cut_baseline': False, 'quantile': 0.8, 'utility_function': 'max', 'cons_trans_chk_for_merge': 5}
+-=spmf=-: {'algorithm': 'CHUI-MinerMax', 'min_support': '0.5%', 'max_support': '1%', 'min_support_count': 1, 'max_pattern_length': 3, 'min_pattern_length': 1, 'show_transaction_ids': True, 'high_utility_itemsets': True, 'min_utility': 1, 'empty_trans_replacement': 1000, 'sort_input_items': {'enable': True, 'ascending': True}, 'replace_zero': {'enable': True, 'replace_zero_with': 99}, 'jar_file': './lib/spmf.jar'}
+-=anomalyscoring=-: {'which': 'matrixprofile', 'matrixprofile': {'subsequence_length': 250, 'auto_subsequence_length': False}, 'iForest': {'num_trees': 100}}
+-=data=-: {'dataset_title': 'MSCRED', 'dataset_file_name': 'MSCRED_data.csv', 'dataset_gt_file_name': 'MSCRED_GT.csv', 'ground_truth_type': 'range', 'dataset_path': './data/raw/MSCRED/', 'spmf_output_path': './data/output/spmf/', 'final_output_path': './data/output/final/', 'processed_data_path': './data/processed/', 'transactions_path': './data/processed/saved_transactions/', 'scores_path': './data/processed/saved_scores/', 'transaction_db_path': './data/processed/transaction_databases/', 'label_pad_size': 250}
+-=logging=-: {'console_log_level': 'INFO', 'log_dir': './logs/', 'log_file_prefix': 'dev'}
+-=plot=-: {'output_path': './plots/', 'subplot_size': 50}
+2024-11-21 10:14:03,290 - mdtaim.utility - load_data - INFO - dataset MSCRED_data.csv loaded successfully!
+2024-11-21 10:14:03,325 - mdtaim.utility - load_data - DEBUG - loaded dataset: 
+          0         1         2         3         4         5         6         7  ...        22        23        24        25        26        27        28        29
+0  0.238710  0.156299  0.166847  0.687780  0.646400  0.273482  0.334908  0.385634  ...  0.322816  0.530677  0.224557  0.454406  0.224936  0.427131  0.524013  0.288947
+1  0.247019  0.251507  0.263827  0.598608  0.608371  0.233124  0.531527  0.571371  ...  0.400522  0.627393  0.320064  0.442683  0.381911  0.511831  0.684171  0.401398
+2  0.324326  0.340349  0.252138  0.555103  0.683036  0.221217  0.341225  0.611757  ...  0.298191  0.519451  0.188563  0.613238  0.276388  0.502882  0.591814  0.333767
+3  0.334878  0.201511  0.178540  0.563443  0.597756  0.169026  0.546905  0.469692  ...  0.301276  0.520984  0.431194  0.427378  0.433617  0.391683  0.669686  0.304048
+4  0.316642  0.195920  0.270866  0.474027  0.589367  0.251547  0.383074  0.392215  ...  0.278174  0.462118  0.173237  0.468448  0.304852  0.511525  0.618112  0.377008
+
+[5 rows x 30 columns]
+2024-11-21 10:14:03,383 - mdtaim.utility - load_data - INFO - ground truth MSCRED_GT.csv loaded successfully!
+2024-11-21 10:14:03,421 - mdtaim.utility - load_data - DEBUG - loaded ground truth: 
+     0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29
+0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+1  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+2  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+3  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+4  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+2024-11-21 10:14:03,421 - mdtaim.utility - load_data - DEBUG - data shape: (20000, 30)
+2024-11-21 10:14:03,421 - mdtaim.utility - load_data - DEBUG - labels shape: (20000, 30)
+2024-11-21 10:14:07,229 - mdtaim.utility - load_data - INFO - anomaly rate of labels:0.0045
+2024-11-21 10:14:07,229 - mdtaim.utility - pad_labels - DEBUG - pad_size: 250
+2024-11-21 10:14:07,232 - mdtaim.utility - pad_labels - DEBUG - intervals for column 0: []
+2024-11-21 10:14:07,232 - mdtaim.utility - pad_labels - DEBUG - intervals for column 0 after padding: []
+2024-11-21 10:14:07,232 - mdtaim.utility - pad_labels - DEBUG - intervals for column 1: []
+2024-11-21 10:14:07,233 - mdtaim.utility - pad_labels - DEBUG - intervals for column 1 after padding: []
+2024-11-21 10:14:07,233 - mdtaim.utility - pad_labels - DEBUG - intervals for column 2: [[14450 14629]]
+2024-11-21 10:14:07,233 - mdtaim.utility - pad_labels - DEBUG - intervals for column 2 after padding: [[14200 14878]]
+2024-11-21 10:14:07,233 - mdtaim.utility - pad_labels - DEBUG - intervals for column 3: [[14450 14629]]
+2024-11-21 10:14:07,234 - mdtaim.utility - pad_labels - DEBUG - intervals for column 3 after padding: [[14200 14878]]
+2024-11-21 10:14:07,234 - mdtaim.utility - pad_labels - DEBUG - intervals for column 4: []
+2024-11-21 10:14:07,234 - mdtaim.utility - pad_labels - DEBUG - intervals for column 4 after padding: []
+2024-11-21 10:14:07,234 - mdtaim.utility - pad_labels - DEBUG - intervals for column 5: [[12670 12849]
+ [17700 17879]]
+2024-11-21 10:14:07,235 - mdtaim.utility - pad_labels - DEBUG - intervals for column 5 after padding: [[12420 13098]
+ [17450 18128]]
+2024-11-21 10:14:07,235 - mdtaim.utility - pad_labels - DEBUG - intervals for column 6: []
+2024-11-21 10:14:07,235 - mdtaim.utility - pad_labels - DEBUG - intervals for column 6 after padding: []
+2024-11-21 10:14:07,235 - mdtaim.utility - pad_labels - DEBUG - intervals for column 7: []
+2024-11-21 10:14:07,235 - mdtaim.utility - pad_labels - DEBUG - intervals for column 7 after padding: []
+2024-11-21 10:14:07,236 - mdtaim.utility - pad_labels - DEBUG - intervals for column 8: [[18530 18709]]
+2024-11-21 10:14:07,236 - mdtaim.utility - pad_labels - DEBUG - intervals for column 8 after padding: [[18280 18958]]
+2024-11-21 10:14:07,236 - mdtaim.utility - pad_labels - DEBUG - intervals for column 9: [[17700 17879]]
+2024-11-21 10:14:07,236 - mdtaim.utility - pad_labels - DEBUG - intervals for column 9 after padding: [[17450 18128]]
+2024-11-21 10:14:07,237 - mdtaim.utility - pad_labels - DEBUG - intervals for column 10: []
+2024-11-21 10:14:07,237 - mdtaim.utility - pad_labels - DEBUG - intervals for column 10 after padding: []
+2024-11-21 10:14:07,237 - mdtaim.utility - pad_labels - DEBUG - intervals for column 11: []
+2024-11-21 10:14:07,237 - mdtaim.utility - pad_labels - DEBUG - intervals for column 11 after padding: []
+2024-11-21 10:14:07,237 - mdtaim.utility - pad_labels - DEBUG - intervals for column 12: []
+2024-11-21 10:14:07,237 - mdtaim.utility - pad_labels - DEBUG - intervals for column 12 after padding: []
+2024-11-21 10:14:07,238 - mdtaim.utility - pad_labels - DEBUG - intervals for column 13: []
+2024-11-21 10:14:07,238 - mdtaim.utility - pad_labels - DEBUG - intervals for column 13 after padding: []
+2024-11-21 10:14:07,238 - mdtaim.utility - pad_labels - DEBUG - intervals for column 14: [[18530 18709]]
+2024-11-21 10:14:07,238 - mdtaim.utility - pad_labels - DEBUG - intervals for column 14 after padding: [[18280 18958]]
+2024-11-21 10:14:07,239 - mdtaim.utility - pad_labels - DEBUG - intervals for column 15: [[11720 11899]]
+2024-11-21 10:14:07,239 - mdtaim.utility - pad_labels - DEBUG - intervals for column 15 after padding: [[11470 12148]]
+2024-11-21 10:14:07,239 - mdtaim.utility - pad_labels - DEBUG - intervals for column 16: [[14450 14629]]
+2024-11-21 10:14:07,239 - mdtaim.utility - pad_labels - DEBUG - intervals for column 16 after padding: [[14200 14878]]
+2024-11-21 10:14:07,240 - mdtaim.utility - pad_labels - DEBUG - intervals for column 17: []
+2024-11-21 10:14:07,240 - mdtaim.utility - pad_labels - DEBUG - intervals for column 17 after padding: []
+2024-11-21 10:14:07,240 - mdtaim.utility - pad_labels - DEBUG - intervals for column 18: []
+2024-11-21 10:14:07,240 - mdtaim.utility - pad_labels - DEBUG - intervals for column 18 after padding: []
+2024-11-21 10:14:07,240 - mdtaim.utility - pad_labels - DEBUG - intervals for column 19: []
+2024-11-21 10:14:07,240 - mdtaim.utility - pad_labels - DEBUG - intervals for column 19 after padding: []
+2024-11-21 10:14:07,241 - mdtaim.utility - pad_labels - DEBUG - intervals for column 20: [[17700 17879]]
+2024-11-21 10:14:07,241 - mdtaim.utility - pad_labels - DEBUG - intervals for column 20 after padding: [[17450 18128]]
+2024-11-21 10:14:07,241 - mdtaim.utility - pad_labels - DEBUG - intervals for column 21: [[12670 12849]]
+2024-11-21 10:14:07,242 - mdtaim.utility - pad_labels - DEBUG - intervals for column 21 after padding: [[12420 13098]]
+2024-11-21 10:14:07,242 - mdtaim.utility - pad_labels - DEBUG - intervals for column 22: []
+2024-11-21 10:14:07,242 - mdtaim.utility - pad_labels - DEBUG - intervals for column 22 after padding: []
+2024-11-21 10:14:07,242 - mdtaim.utility - pad_labels - DEBUG - intervals for column 23: []
+2024-11-21 10:14:07,242 - mdtaim.utility - pad_labels - DEBUG - intervals for column 23 after padding: []
+2024-11-21 10:14:07,242 - mdtaim.utility - pad_labels - DEBUG - intervals for column 24: [[11720 11899]]
+2024-11-21 10:14:07,243 - mdtaim.utility - pad_labels - DEBUG - intervals for column 24 after padding: [[11470 12148]]
+2024-11-21 10:14:07,243 - mdtaim.utility - pad_labels - DEBUG - intervals for column 25: [[18530 18709]]
+2024-11-21 10:14:07,243 - mdtaim.utility - pad_labels - DEBUG - intervals for column 25 after padding: [[18280 18958]]
+2024-11-21 10:14:07,244 - mdtaim.utility - pad_labels - DEBUG - intervals for column 26: [[12670 12849]]
+2024-11-21 10:14:07,244 - mdtaim.utility - pad_labels - DEBUG - intervals for column 26 after padding: [[12420 13098]]
+2024-11-21 10:14:07,244 - mdtaim.utility - pad_labels - DEBUG - intervals for column 27: []
+2024-11-21 10:14:07,244 - mdtaim.utility - pad_labels - DEBUG - intervals for column 27 after padding: []
+2024-11-21 10:14:07,244 - mdtaim.utility - pad_labels - DEBUG - intervals for column 28: [[11720 11899]]
+2024-11-21 10:14:07,245 - mdtaim.utility - pad_labels - DEBUG - intervals for column 28 after padding: [[11470 12148]]
+2024-11-21 10:14:07,245 - mdtaim.utility - pad_labels - DEBUG - intervals for column 29: []
+2024-11-21 10:14:07,245 - mdtaim.utility - pad_labels - DEBUG - intervals for column 29 after padding: []
+2024-11-21 10:14:09,384 - mdtaim.utility - load_data - INFO - anomaly rate of padded labels: 0.016975
+2024-11-21 10:14:09,404 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 0 with given window size: 250
+2024-11-21 10:14:09,913 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 1 with given window size: 250
+2024-11-21 10:14:10,527 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 2 with given window size: 250
+2024-11-21 10:14:11,028 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 3 with given window size: 250
+2024-11-21 10:14:11,566 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 4 with given window size: 250
+2024-11-21 10:14:12,106 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 5 with given window size: 250
+2024-11-21 10:14:12,604 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 6 with given window size: 250
+2024-11-21 10:14:13,156 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 7 with given window size: 250
+2024-11-21 10:14:13,645 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 8 with given window size: 250
+2024-11-21 10:14:14,206 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 9 with given window size: 250
+2024-11-21 10:14:14,704 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 10 with given window size: 250
+2024-11-21 10:14:15,278 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 11 with given window size: 250
+2024-11-21 10:14:15,816 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 12 with given window size: 250
+2024-11-21 10:14:16,401 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 13 with given window size: 250
+2024-11-21 10:14:16,913 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 14 with given window size: 250
+2024-11-21 10:14:17,455 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 15 with given window size: 250
+2024-11-21 10:14:17,967 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 16 with given window size: 250
+2024-11-21 10:14:18,535 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 17 with given window size: 250
+2024-11-21 10:14:19,049 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 18 with given window size: 250
+2024-11-21 10:14:19,606 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 19 with given window size: 250
+2024-11-21 10:14:20,093 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 20 with given window size: 250
+2024-11-21 10:14:20,673 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 21 with given window size: 250
+2024-11-21 10:14:21,193 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 22 with given window size: 250
+2024-11-21 10:14:21,744 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 23 with given window size: 250
+2024-11-21 10:14:22,247 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 24 with given window size: 250
+2024-11-21 10:14:22,805 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 25 with given window size: 250
+2024-11-21 10:14:23,309 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 26 with given window size: 250
+2024-11-21 10:14:23,879 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 27 with given window size: 250
+2024-11-21 10:14:24,400 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 28 with given window size: 250
+2024-11-21 10:14:24,980 - mdtaim.utility - calculate_score - DEBUG - calculating MP for dimension 29 with given window size: 250
+2024-11-21 10:14:25,529 - mdtaim.utility - calculate_score - DEBUG - matrix profile shape is: (20000, 30) and its header is: 
+[[7.80566453 7.83895993 7.98365517 7.62694858 7.16916124 7.76093789
+  8.22407416 8.10916155 7.53921966 8.07868424 8.08064384 8.12643636
+  7.67326168 7.92435397 7.67316813 7.80115402 7.4138823  7.77253315
+  8.20935169 8.04741354 7.21096089 7.62320151 8.28470194 7.43652736
+  7.80222185 7.49574882 7.98508749 7.85885969 7.97665255 8.13340681]
+ [7.90669747 7.87240821 8.04748094 7.70579782 7.24319251 7.79878211
+  8.17667914 8.0480891  7.55288488 8.01714045 8.15469572 8.19276567
+  7.65235085 7.86446119 7.59079945 7.81995775 7.4236483  7.77311868
+  8.26159908 8.0172871  7.195951   7.62019438 8.34627955 7.42537343
+  7.79663765 7.48727856 7.99497423 7.85917206 7.97490386 8.13700929]
+ [7.88135844 7.89462732 8.02859835 7.71564464 7.24845768 7.83168865
+  8.10112768 7.98692499 7.53731793 8.0592289  8.22058916 8.2087407
+  7.58677631 7.89889869 7.58388814 7.85005163 7.44307668 7.73022939
+  8.26866289 8.03755974 7.1766594  7.61035176 8.31825987 7.42711164
+  7.81808995 7.47021649 7.99225714 7.85876624 7.96107133 8.12504392]
+ [7.8995618  7.91031728 8.06865756 7.70657681 7.21317739 7.88553866
+  8.12423958 7.96561537 7.50396881 8.04722436 8.21411877 8.20553357
+  7.56252067 7.90369809 7.58617311 7.85697492 7.45786635 7.72246494
+  8.35027338 8.03407412 7.19030592 7.61812198 8.32150025 7.36305444
+  7.84723237 7.45653551 8.01983752 7.85951984 7.951082   8.11875602]
+ [7.9119991  7.89531419 8.10769594 7.70158025 7.19230506 7.93749277
+  8.09099571 7.88375276 7.49758268 7.98768227 8.21676885 8.22040902
+  7.48777285 7.87293512 7.59208348 7.85131517 7.47196628 7.7084888
+  8.38746326 8.0570404  7.12752295 7.62259447 8.33243973 7.36728672
+  7.84256492 7.41144613 7.94971616 7.841617   7.95337721 8.12780176]]
+2024-11-21 10:14:25,536 - mdtaim.utility - save_to_pickle - INFO - matrix profile saved to file ./data/processed/saved_scores/mps.pkl successfully!
+2024-11-21 10:14:25,548 - mdtaim.utility - cal_anomaly_score - INFO - [1m[92mMP calculation done! total time to calculate Matrix Profile: 16.164 seconds[0m[0m
+2024-11-21 10:14:30,300 - mdtaim.utility - fast_find_anomalies - DEBUG - kdps shape: (20000, 30)
+2024-11-21 10:14:30,300 - mdtaim.utility - fast_find_anomalies - DEBUG - KDPs: [[7.01209686 7.2046366  7.22391448 ... 8.59271472 8.62292819 8.99845342]
+ [6.9903712  7.20464567 7.2275917  ... 8.60814083 8.65227184 9.04801385]
+ [7.00335908 7.18311537 7.24823704 ... 8.65700102 8.68475668 9.03023456]
+ ...
+ [7.24836296 7.27939623 7.3127706  ... 8.31968152 8.38908564 8.6629073 ]
+ [7.2605561  7.29352219 7.30921413 ... 8.34153976 8.38154725 8.68132829]
+ [7.17858297 7.2232038  7.30488604 ... 8.33608278 8.40786372 8.68985478]]
+2024-11-21 10:14:30,314 - mdtaim.utility - fast_find_anomalies - DEBUG - kdps_idx shape: (20000, 30)
+2024-11-21 10:14:30,315 - mdtaim.utility - fast_find_anomalies - DEBUG - KDPs_idx: [[11  2 29 ... 12  9  7]
+ [11  2 29 ... 12  9  7]
+ [11  2 29 ... 12  9  7]
+ ...
+ [17 14 29 ...  8  0 15]
+ [17 14 29 ...  8  0 15]
+ [14 17 29 ... 20  0 15]]
+2024-11-21 10:14:30,315 - mdtaim.utility - cal_kdp - INFO - [1m[92mKDP calculation done! total time to calculate KDP: 0.030 seconds[0m[0m
+2024-11-21 10:14:34,886 - mdtaim.utility - load_anomaly_scores - INFO - Anomaly Scores loaded successfully for itemset mining!
+2024-11-21 10:14:34,887 - mdtaim.utility - convert_anomalies_to_transactions - DEBUG - window size is 250 and number of windows (transactins) are: 80
+2024-11-21 10:14:34,887 - mdtaim.utility - convert_anomalies_to_transactions - INFO - Converting anomalies to transactions using [1m[91menergy[0m[0m method!
+2024-11-21 10:14:34,889 - mdtaim.utility - convert_energy - DEBUG - Training energy of dimensions: [62.61704732 60.66680299 60.37993917 59.7346643  58.55557896 60.1105655
+ 63.90039358 62.98293919 60.68066348 60.25431698 61.62958385 60.9299034
+ 64.02042874 59.92888506 58.60551497 63.01052007 58.81565027 59.80036107
+ 61.20294052 61.24587842 61.01705405 58.37431273 61.51876356 60.13013502
+ 60.13916011 59.1999279  59.45167742 59.96373492 60.06821659 58.62949934]
+2024-11-21 10:14:34,889 - mdtaim.utility - convert_energy - DEBUG - Threshold 1.0 has 1 anomalies
+2024-11-21 10:14:34,890 - mdtaim.utility - convert_energy - DEBUG - Threshold 1.1 has 1 anomalies
+2024-11-21 10:14:34,892 - mdtaim.utility - convert_energy - INFO - No anomalies found in training data for threshold [1m[91m1.20[0m[0m! will use this threshold
+2024-11-21 10:14:34,897 - mdtaim.utility - convert_anomalies_to_transactions - INFO - Transactions were created successfully!
+2024-11-21 10:14:34,897 - mdtaim.utility - print_transactions - DEBUG - Dataset Transactions are: 
+Dataset Transactions are: 
+Transaction 1: Empty.
+Transaction 2: Empty.
+Transaction 3: Empty.
+Transaction 4: Empty.
+Transaction 5: Empty.
+Transaction 6: Empty.
+Transaction 7: Empty.
+Transaction 8: Empty.
+Transaction 9: Empty.
+Transaction 10: Empty.
+Transaction 11: Empty.
+Transaction 12: Empty.
+Transaction 13: Empty.
+Transaction 14: Empty.
+Transaction 15: Empty.
+Transaction 16: Empty.
+Transaction 17: Empty.
+Transaction 18: Empty.
+Transaction 19: Empty.
+Transaction 20: Empty.
+Transaction 21: Empty.
+Transaction 22: Empty.
+Transaction 23: Empty.
+Transaction 24: Empty.
+Transaction 25: Empty.
+Transaction 26: Empty.
+Transaction 27: Empty.
+Transaction 28: Empty.
+Transaction 29: Empty.
+Transaction 30: Empty.
+Transaction 31: Empty.
+Transaction 32: Empty.
+Transaction 33: Empty.
+Transaction 34: Empty.
+Transaction 35: Empty.
+Transaction 36: Empty.
+Transaction 37: Empty.
+Transaction 38: Empty.
+Transaction 39: Empty.
+Transaction 40: Empty.
+Transaction 41: Empty.
+Transaction 42: Empty.
+Transaction 43: Empty.
+Transaction 44: Empty.
+Transaction 45: Empty.
+Transaction 46: Empty.
+Transaction 47: Anomaly(DIM:28, UTIL: 9.598110325673899)
+Transaction 48: Empty.
+Transaction 49: Empty.
+Transaction 50: Empty.
+Transaction 51: Anomaly(DIM:5, UTIL: 14.183150134686626):::Anomaly(DIM:21, UTIL: 12.0277825168842):::Anomaly(DIM:26, UTIL: 12.722394738145866)
+Transaction 52: Empty.
+Transaction 53: Empty.
+Transaction 54: Empty.
+Transaction 55: Empty.
+Transaction 56: Empty.
+Transaction 57: Anomaly(DIM:2, UTIL: 12.305974339449149)
+Transaction 58: Anomaly(DIM:2, UTIL: 13.887342881892161):::Anomaly(DIM:3, UTIL: 11.208382227371693):::Anomaly(DIM:16, UTIL: 17.438501801801234)
+Transaction 59: Empty.
+Transaction 60: Empty.
+Transaction 61: Empty.
+Transaction 62: Empty.
+Transaction 63: Empty.
+Transaction 64: Empty.
+Transaction 65: Empty.
+Transaction 66: Empty.
+Transaction 67: Empty.
+Transaction 68: Empty.
+Transaction 69: Empty.
+Transaction 70: Empty.
+Transaction 71: Anomaly(DIM:5, UTIL: 10.165517960303209):::Anomaly(DIM:20, UTIL: 9.870137161218484)
+Transaction 72: Empty.
+Transaction 73: Empty.
+Transaction 74: Anomaly(DIM:8, UTIL: 11.989124194506203):::Anomaly(DIM:25, UTIL: 11.412938438359031)
+Transaction 75: Anomaly(DIM:8, UTIL: 12.196444811732764):::Anomaly(DIM:25, UTIL: 11.696384328581871)
+Transaction 76: Empty.
+Transaction 77: Empty.
+Transaction 78: Empty.
+Transaction 79: Empty.
+Transaction 80: Empty.
+2024-11-21 10:14:34,897 - mdtaim.utility - merge_consecutive_anomalies - DEBUG - will jump to 47 after only one
+2024-11-21 10:14:34,897 - mdtaim.utility - merge_consecutive_anomalies - DEBUG - will jump to 51 after only one
+2024-11-21 10:14:34,898 - mdtaim.utility - merge_batch - DEBUG - merge table: 
+Header: [0 2 16 3] 
+Row 0: [57 entry(exist=1, utility=12.305974339449149) entry(exist=0, utility=0)
+ entry(exist=0, utility=0)]
+Row 1: [58 entry(exist=1, utility=13.887342881892161)
+ entry(exist=1, utility=17.438501801801234)
+ entry(exist=1, utility=11.208382227371693)]
+Summary: [0 2 1 1]
+2024-11-21 10:14:34,898 - mdtaim.utility - merge_batch - DEBUG - Detected max utility transaction windows: [58, 57] on dimension: 2
+2024-11-21 10:14:34,898 - mdtaim.utility - remove_anomaly_except_dim - DEBUG - removing anomaly on dimension: 2 from transaction: 57
+2024-11-21 10:14:34,899 - mdtaim.utility - merge_consecutive_anomalies - DEBUG - will jump to 58 transaction: 59 after this number of transactions: 2
+2024-11-21 10:14:34,899 - mdtaim.utility - merge_consecutive_anomalies - DEBUG - will jump to 71 after only one
+2024-11-21 10:14:34,899 - mdtaim.utility - merge_batch - DEBUG - merge table: 
+Header: [0 8 25] 
+Row 0: [74 entry(exist=1, utility=11.989124194506203)
+ entry(exist=1, utility=11.412938438359031)]
+Row 1: [75 entry(exist=1, utility=12.196444811732764)
+ entry(exist=1, utility=11.696384328581871)]
+Summary: [0 2 2]
+2024-11-21 10:14:34,899 - mdtaim.utility - merge_batch - DEBUG - Detected max utility transaction windows: [75, 74] on dimension: 8
+2024-11-21 10:14:34,899 - mdtaim.utility - remove_anomaly_except_dim - DEBUG - removing anomaly on dimension: 8 from transaction: 74
+2024-11-21 10:14:34,899 - mdtaim.utility - merge_batch - DEBUG - Detected max utility transaction windows: [75, 74] on dimension: 25
+2024-11-21 10:14:34,899 - mdtaim.utility - remove_anomaly_except_dim - DEBUG - removing anomaly on dimension: 25 from transaction: 74
+2024-11-21 10:14:34,899 - mdtaim.utility - merge_consecutive_anomalies - DEBUG - will jump to 75 transaction: 76 after this number of transactions: 2
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 1: Empty.
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 2: Empty.
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 3: Empty.
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 4: Empty.
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 5: Empty.
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 6: Empty.
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 7: Empty.
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 8: Empty.
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 9: Empty.
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 10: Empty.
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 11: Empty.
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 12: Empty.
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 13: Empty.
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 14: Empty.
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 15: Empty.
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 16: Empty.
+2024-11-21 10:14:34,900 - mdtaim.utility - print_transactions - DEBUG - Transaction 17: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 18: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 19: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 20: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 21: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 22: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 23: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 24: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 25: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 26: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 27: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 28: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 29: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 30: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 31: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 32: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 33: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 34: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 35: Empty.
+2024-11-21 10:14:34,901 - mdtaim.utility - print_transactions - DEBUG - Transaction 36: Empty.
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 37: Empty.
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 38: Empty.
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 39: Empty.
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 40: Empty.
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 41: Empty.
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 42: Empty.
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 43: Empty.
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 44: Empty.
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 45: Empty.
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 46: Empty.
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 47: Anomaly(DIM:28, UTIL: 9.598110325673899)
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 48: Empty.
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 49: Empty.
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 50: Empty.
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 51: Anomaly(DIM:5, UTIL: 14.183150134686626):::Anomaly(DIM:21, UTIL: 12.0277825168842):::Anomaly(DIM:26, UTIL: 12.722394738145866)
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 52: Empty.
+2024-11-21 10:14:34,902 - mdtaim.utility - print_transactions - DEBUG - Transaction 53: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 54: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 55: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 56: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 57: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 58: Anomaly(DIM:2, UTIL: 13.887342881892161):::Anomaly(DIM:3, UTIL: 11.208382227371693):::Anomaly(DIM:16, UTIL: 17.438501801801234)
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 59: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 60: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 61: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 62: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 63: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 64: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 65: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 66: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 67: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 68: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 69: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 70: Empty.
+2024-11-21 10:14:34,903 - mdtaim.utility - print_transactions - DEBUG - Transaction 71: Anomaly(DIM:5, UTIL: 10.165517960303209):::Anomaly(DIM:20, UTIL: 9.870137161218484)
+2024-11-21 10:14:34,904 - mdtaim.utility - print_transactions - DEBUG - Transaction 72: Empty.
+2024-11-21 10:14:34,904 - mdtaim.utility - print_transactions - DEBUG - Transaction 73: Empty.
+2024-11-21 10:14:34,904 - mdtaim.utility - print_transactions - DEBUG - Transaction 74: Empty.
+2024-11-21 10:14:34,904 - mdtaim.utility - print_transactions - DEBUG - Transaction 75: Anomaly(DIM:8, UTIL: 12.196444811732764):::Anomaly(DIM:25, UTIL: 11.696384328581871)
+2024-11-21 10:14:34,904 - mdtaim.utility - print_transactions - DEBUG - Transaction 76: Empty.
+2024-11-21 10:14:34,904 - mdtaim.utility - print_transactions - DEBUG - Transaction 77: Empty.
+2024-11-21 10:14:34,904 - mdtaim.utility - print_transactions - DEBUG - Transaction 78: Empty.
+2024-11-21 10:14:34,904 - mdtaim.utility - print_transactions - DEBUG - Transaction 79: Empty.
+2024-11-21 10:14:34,904 - mdtaim.utility - print_transactions - DEBUG - Transaction 80: Empty.
+2024-11-21 10:14:34,904 - mdtaim.utility - merge_consecutive_anomalies - INFO - consecutive anomalies merged successfully!
+2024-11-21 10:14:34,904 - mdtaim.utility - print_transactions - DEBUG - Dataset Transactions are: 
+Dataset Transactions are: 
+Transaction 1: Empty.
+Transaction 2: Empty.
+Transaction 3: Empty.
+Transaction 4: Empty.
+Transaction 5: Empty.
+Transaction 6: Empty.
+Transaction 7: Empty.
+Transaction 8: Empty.
+Transaction 9: Empty.
+Transaction 10: Empty.
+Transaction 11: Empty.
+Transaction 12: Empty.
+Transaction 13: Empty.
+Transaction 14: Empty.
+Transaction 15: Empty.
+Transaction 16: Empty.
+Transaction 17: Empty.
+Transaction 18: Empty.
+Transaction 19: Empty.
+Transaction 20: Empty.
+Transaction 21: Empty.
+Transaction 22: Empty.
+Transaction 23: Empty.
+Transaction 24: Empty.
+Transaction 25: Empty.
+Transaction 26: Empty.
+Transaction 27: Empty.
+Transaction 28: Empty.
+Transaction 29: Empty.
+Transaction 30: Empty.
+Transaction 31: Empty.
+Transaction 32: Empty.
+Transaction 33: Empty.
+Transaction 34: Empty.
+Transaction 35: Empty.
+Transaction 36: Empty.
+Transaction 37: Empty.
+Transaction 38: Empty.
+Transaction 39: Empty.
+Transaction 40: Empty.
+Transaction 41: Empty.
+Transaction 42: Empty.
+Transaction 43: Empty.
+Transaction 44: Empty.
+Transaction 45: Empty.
+Transaction 46: Empty.
+Transaction 47: Anomaly(DIM:28, UTIL: 9.598110325673899)
+Transaction 48: Empty.
+Transaction 49: Empty.
+Transaction 50: Empty.
+Transaction 51: Anomaly(DIM:5, UTIL: 14.183150134686626):::Anomaly(DIM:21, UTIL: 12.0277825168842):::Anomaly(DIM:26, UTIL: 12.722394738145866)
+Transaction 52: Empty.
+Transaction 53: Empty.
+Transaction 54: Empty.
+Transaction 55: Empty.
+Transaction 56: Empty.
+Transaction 57: Empty.
+Transaction 58: Anomaly(DIM:2, UTIL: 13.887342881892161):::Anomaly(DIM:3, UTIL: 11.208382227371693):::Anomaly(DIM:16, UTIL: 17.438501801801234)
+Transaction 59: Empty.
+Transaction 60: Empty.
+Transaction 61: Empty.
+Transaction 62: Empty.
+Transaction 63: Empty.
+Transaction 64: Empty.
+Transaction 65: Empty.
+Transaction 66: Empty.
+Transaction 67: Empty.
+Transaction 68: Empty.
+Transaction 69: Empty.
+Transaction 70: Empty.
+Transaction 71: Anomaly(DIM:5, UTIL: 10.165517960303209):::Anomaly(DIM:20, UTIL: 9.870137161218484)
+Transaction 72: Empty.
+Transaction 73: Empty.
+Transaction 74: Empty.
+Transaction 75: Anomaly(DIM:8, UTIL: 12.196444811732764):::Anomaly(DIM:25, UTIL: 11.696384328581871)
+Transaction 76: Empty.
+Transaction 77: Empty.
+Transaction 78: Empty.
+Transaction 79: Empty.
+Transaction 80: Empty.
+2024-11-21 10:14:34,910 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 47 and dimension 28. win start: 11750 and win end: 12000 label start: 11470 and label end: 12148
+2024-11-21 10:14:34,910 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 51 and dimension 5. win start: 12750 and win end: 13000 label start: 12420 and label end: 13098
+2024-11-21 10:14:34,911 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 51 and dimension 21. win start: 12750 and win end: 13000 label start: 12420 and label end: 13098
+2024-11-21 10:14:34,911 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 51 and dimension 26. win start: 12750 and win end: 13000 label start: 12420 and label end: 13098
+2024-11-21 10:14:34,911 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 58 and dimension 2. win start: 14500 and win end: 14750 label start: 14200 and label end: 14878
+2024-11-21 10:14:34,912 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 58 and dimension 3. win start: 14500 and win end: 14750 label start: 14200 and label end: 14878
+2024-11-21 10:14:34,912 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 58 and dimension 16. win start: 14500 and win end: 14750 label start: 14200 and label end: 14878
+2024-11-21 10:14:34,912 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 71 and dimension 5. win start: 17750 and win end: 18000 label start: 17450 and label end: 18128
+2024-11-21 10:14:34,913 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 71 and dimension 20. win start: 17750 and win end: 18000 label start: 17450 and label end: 18128
+2024-11-21 10:14:34,913 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 75 and dimension 8. win start: 18750 and win end: 19000 label start: 18280 and label end: 18958
+2024-11-21 10:14:34,913 - mdtaim.utility - cal_anomaly_detec_accuracy - DEBUG - match found for transaction 75 and dimension 25. win start: 18750 and win end: 19000 label start: 18280 and label end: 18958
+2024-11-21 10:14:34,913 - mdtaim.utility - cal_anomaly_detec_accuracy - INFO - number of matches: [1m[92m11[0m[0m out of [1m[92m11[0m[0m detected anomalies for [1m[92m15[0m[0m labels
+2024-11-21 10:14:34,914 - mdtaim.utility - cal_anomaly_detec_accuracy - INFO - Precision: 1.0, Recall: 0.7333333333333333, F1 Score: 0.8461538461538461
+2024-11-21 10:14:34,915 - mdtaim.utility - save_transactions_to_file - INFO - current transactions saved to pickle successfully!
+2024-11-21 10:14:34,916 - mdtaim.utility - load_transactions_from_file - INFO - transaction DB loaded successfully!
+2024-11-21 10:14:34,917 - mdtaim.utility - prepare_transaction_database - INFO - Transaction DB written to file successfully!
+2024-11-21 10:14:35,621 - mdtaim.utility - check_java_version - INFO - Found Java version: 21, going on...
+2024-11-21 10:14:35,633 - mdtaim.utility - run_algorithm - INFO - Running SPMF: [4m[91mCHUI-MinerMax[0m[0m algorithm with the command java -jar ./lib/spmf.jar run CHUI-MinerMax ./data/processed/transaction_databases/utility_context.txt ./data/output/spmf/CHUI-MinerMax_MSCRED_out.txt 1...
+2024-11-21 10:14:35,988 - mdtaim.utility - run_algorithm - DEBUG - Time taken to run CHUI-MinerMax command: 0.3652 seconds
+2024-11-21 10:14:35,988 - mdtaim.utility - run_algorithm - INFO - SPMF Output:
+>/Volumes/develop/MsThesis/MDTAIM/lib/spmf.jar
+=============  CHUIMine(max)_EUCP ALGORITHM - STATS =============
+ Total time ~ 5 ms
+ Memory ~ 9.927085876464844 MB
+ MHUI count : 5
+ Candidate count : 32
+=====================================================
+
+2024-11-21 10:14:35,988 - mdtaim.utility - perform_itemset_mining - INFO - [1m[92mMP conversion to transactions took 0.018 seconds and SPMF execution took 1.071 seconds[0m[0m

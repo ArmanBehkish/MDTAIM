@@ -49,6 +49,13 @@ class Pipeline:
 
         self.padded_labels = data_obj.pad_labels()
 
+        data_obj.plot_plotly(
+            title=self.dataset_title,
+            label_type="padded",
+            show_plot=False,
+            save_plot=True,
+        )
+
         self.logger_obj.info(
             "anomaly rate of padded labels: %s",
             data_obj.cal_anomaly_rate(self.padded_labels),
@@ -80,6 +87,15 @@ class Pipeline:
             show_plot=False,
         )
 
+        mp_obj.plot_plotly(
+            title=f"{self.dataset_title}_MATRIX_PROFILE",
+            save_plot=True,
+            line_color="blue",
+            label_type="padded",
+            show_plot=False,
+            labels=self.padded_labels,
+        )
+
     def cal_kdp(self) -> None:
         """
         Calculate the KDP
@@ -99,6 +115,14 @@ class Pipeline:
         )
 
         kdp_obj.plot(
+            title=f"{self.dataset_title}_KDP",
+            line_color="brown",
+            label_type="padded",
+            labels=self.padded_labels,
+            show_plot=False,
+        )
+
+        kdp_obj.plot_plotly(
             title=f"{self.dataset_title}_KDP",
             line_color="brown",
             label_type="padded",
@@ -151,3 +175,4 @@ class Pipeline:
         """
         postprocess_obj = PostProcess(self.config_obj, self.logger_obj)
         postprocess_obj.produce_output()
+        postprocess_obj.plot_heatmap()

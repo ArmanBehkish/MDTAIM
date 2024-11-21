@@ -1,0 +1,5 @@
+28  #SUP: 1 #UTIL: 10
+20 5  #SUP: 1 #UTIL: 20
+8 25  #SUP: 1 #UTIL: 24
+21 26 5  #SUP: 1 #UTIL: 39
+2 3 16  #SUP: 1 #UTIL: 42

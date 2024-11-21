@@ -3,7 +3,7 @@
 import logging
 from .config import Config
 from .processdata import PreprocessData
-from .utility import md_plot
+from .utility import md_plot, plot_plotly
 import numpy as np
 from typing import Tuple, Optional
 import matplotlib.pyplot as plt
@@ -78,4 +78,40 @@ class KDP:
             line_color=line_color,
             show_plot=show_plot,
             name=name,
+        )
+
+    def plot_plotly(
+        self,
+        title: str = "KDP_Profile",
+        save_plot: bool = True,
+        line_color: str = "gray",
+        label_type: Optional[str] = "normal",
+        show_plot: bool = True,
+        labels: np.ndarray = np.empty((0, 0), dtype=np.float64),
+    ):
+        """Plot and save the KDPs"""
+
+        plot_config = self.config.get_config()["plot"]
+        subplot_size = plot_config["subplot_size"]
+
+        if self.kdps is None or labels is None:
+            self.logger.error("KDP profile and Labels not Provided or Loaded!")
+            raise ValueError("Data or labels are not loaded!")
+
+        kd_labels = PreprocessData.make_kd_labels(self, labels)
+        message = f"{title} - LABEL TYPE: {label_type} - SHAPE: {self.kdps.shape}"
+        kdps = self.kdps.T
+
+        plot_plotly(
+            kdps,
+            kd_labels,
+            self.logger,
+            plot_config,
+            title,
+            message,
+            save_plot,
+            show_plot,
+            line_color,
+            name="KDP",
+            subplot_size=subplot_size,
         )

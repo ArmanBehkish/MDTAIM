@@ -207,12 +207,11 @@ class MergeTable:
         self, dim: int, max_util_tran_wins: list[int]
     ) -> None:
         """
-        remove anomalies on given dimension except the one with max utility, in case 2 with highest utility are very close, remove others!
+        remove anomalies on given dimension except the one with max utility, in case 2 with highest utility are very close, keep 2 and remove others!
         """
 
-        util_thr = self.config.get_config()["itemset_mining_preparation"][
-            "keep_adj_util_diff_thr"
-        ]
+        # change this if you want to keep two anomalies with very close high utilities (e.g., 0.01 for less than 1% difference)
+        util_thr = 0
 
         if len(max_util_tran_wins) == 1:
             self.logger.error(
@@ -258,6 +257,7 @@ class MergeTable:
                 return
 
             if util_diff > util_thr:
+                # keep only the one with max utility
                 for tran in self.list_of_transactions:
                     if (
                         tran.get_anomaly(dim) is not None
@@ -371,6 +371,28 @@ class Transactions:
             if self.transactions[i].is_empty and not self.transactions[i + 1].is_empty:
                 cons_trans.append(self.transactions[i + 1])
                 for j in range(i + 2, i + num_cons_to_check + 3):
+                    if j >= len(self.transactions):
+                        # fix this
+                        self.logger.debug(
+                            f"reaching the end of transactions, breaking! j is {j} and i is {i}"
+                        )
+                        if len(cons_trans) > 1:
+                            before = len([x for x in cons_trans if not x.is_empty])
+                            processed_trans = self.merge_batch(cons_trans)
+                            self.transactions[i + 1 : j] = processed_trans
+                            i += before + 1
+                            self.logger.debug(
+                                f"will jump to {i} transaction: {i+1} after this number of transactions: {before}"
+                            )
+                            cons_trans = []
+                            break
+                        else:
+                            # There was only one transaction!
+                            cons_trans = []
+                            i = j
+                            self.logger.debug(f"will jump to {i} after only one")
+                            break
+
                     if j == i + num_cons_to_check + 2:
                         self.logger.error(
                             "Not able to merge transactions, too many consecutive transactions!"
@@ -400,6 +422,56 @@ class Transactions:
                             i = j
                             self.logger.debug(f"will jump to {i} after only one")
                             break
+
+        self.print_transactions("logs")
+        # Now merge the remaining anomalies that might remain in adjucent windows into one window by looking at 2 consecutive windows, move all anomalies to the window with overall higher utility.
+        for trans1, trans2 in zip(self.transactions[:-1], self.transactions[1:]):
+            if trans1.is_empty or trans2.is_empty:
+                continue
+            else:
+                # Sum utilities of anomalies in each transaction
+                util_t_one = sum(
+                    anomaly.utility
+                    for anomaly in trans1.anomalies
+                    if anomaly.utility is not None
+                )
+                util_t_two = sum(
+                    anomaly.utility
+                    for anomaly in trans2.anomalies
+                    if anomaly.utility is not None
+                )
+
+                # overall more utility in transaction 1, bring everything here
+                if util_t_one >= util_t_two:
+                    self.logger.debug(
+                        f"overall more utility in transaction {trans1.win_num}, bringing everything here!"
+                    )
+                    for anomaly in trans2.anomalies[:]:
+                        exists_in_trans1 = any(
+                            a.dimension == anomaly.dimension for a in trans1.anomalies
+                        )
+                        if exists_in_trans1:
+                            trans2.remove_anomaly(anomaly.dimension)
+                        else:
+                            trans1.anomalies.append(anomaly)
+                            trans2.remove_anomaly(anomaly.dimension)
+
+                # overall more utility in transaction 2
+                if util_t_two > util_t_one:
+                    self.logger.debug(
+                        f"overall more utility in transaction {trans2.win_num}, bringing everything here!"
+                    )
+                    for anomaly in trans1.anomalies[:]:
+                        exists_in_trans2 = any(
+                            a.dimension == anomaly.dimension for a in trans2.anomalies
+                        )
+                        if exists_in_trans2:
+                            trans1.remove_anomaly(anomaly.dimension)
+                        else:
+                            trans2.anomalies.append(anomaly)
+                            trans1.remove_anomaly(anomaly.dimension)
+
+                    trans1.is_empty = True
 
         self.logger.info("consecutive anomalies merged successfully!")
 
@@ -461,12 +533,14 @@ class Transactions:
                     and np.all(np.array(vector[one_idx + 1 :]) == 1)
                 ):
                     # keep 2 with highest utilities
+                    # one_idx + 2: 1 for vect one  for table
                     max_util_indices = np.argsort(
-                        [x.utility for x in merge.table[one_idx + 1 : -1, d]],
+                        [x.utility for x in merge.table[one_idx + 2 : -1, d]],
                         axis=0,
                     )[::-1][:2]
+                    # take from last rows of table
                     max_util_tran_wins = [
-                        merge.table[i + 1, 0] for i in max_util_indices
+                        merge.table[i + one_idx + 2, 0] for i in max_util_indices
                     ]
                     # remove anomalies from dimension
                     merge.remove_anomaly_except_dim(dim, max_util_tran_wins)
@@ -474,15 +548,16 @@ class Transactions:
                 # cases of -1 in diff:
                 # -1 can not be first
                 # all diff values until m_one_idx are 1
+                # TASK: CHECK M_ONE_INDEXES MULTIPLE TIMES!
                 if (
                     m_one_idx != -1
                     and one_idx == -1
                     and m_one_idx != 0
-                    and np.all(np.array(vector[:m_one_idx]) == 1)
+                    and np.all(np.array(vector[: m_one_idx + 1]) == 1)
                 ):
 
                     max_util_indices = np.argsort(
-                        [x.utility for x in merge.table[1 : m_one_idx + 1, d]],
+                        [x.utility for x in merge.table[1 : m_one_idx + 2, d]],
                         axis=0,
                     )[::-1][:2]
                     max_util_tran_wins = [
@@ -500,11 +575,14 @@ class Transactions:
                 ):
 
                     max_util_indices = np.argsort(
-                        [x.utility for x in merge.table[one_idx + 1 : m_one_idx, d]],
+                        [
+                            x.utility
+                            for x in merge.table[one_idx + 2 : m_one_idx + 2, d]
+                        ],
                         axis=0,
                     )[::-1][:2]
                     max_util_tran_wins = [
-                        merge.table[i + 1, 0] for i in max_util_indices
+                        merge.table[i + one_idx + 2, 0] for i in max_util_indices
                     ]
                     merge.remove_anomaly_except_dim(dim, max_util_tran_wins)
 

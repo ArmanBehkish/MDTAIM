@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from .config import Config
-from .utility import md_plot
+from .utility import md_plot, plot_plotly
 
 
 class PreprocessData:
@@ -262,4 +262,48 @@ class PreprocessData:
             idx_string,
             line_color,
             show_plot,
+        )
+
+    def plot_plotly(
+        self,
+        title: str = "result",
+        save_plot: bool = True,
+        line_color: str = "gray",
+        label_type: Optional[str] = "normal",
+        show_plot: bool = True,
+    ):
+        """Ploting the data in a nice way"""
+
+        plot_config = self.config.get_config()["plot"]
+        subplot_size = plot_config["subplot_size"]
+
+        if label_type == "padded":
+            labels = self.padded_labels
+        elif label_type == "normal":
+            labels = self.labels
+        else:
+            raise ValueError(f"Invalid label type: {label_type}")
+
+        if self.data is None or labels is None:
+            self.logger.error("Trying to plot unloaded data or labels!")
+            raise ValueError("Data or labels are not loaded!")
+
+        message = (
+            f"DATASET: {title} - LABEL TYPE: {label_type} - SHAPE: {self.data.shape}"
+        )
+
+        data = self.data.T
+
+        plot_plotly(
+            data,
+            labels,
+            self.logger,
+            plot_config,
+            title,
+            message,
+            save_plot,
+            show_plot,
+            line_color,
+            name="TS",
+            subplot_size=subplot_size,
         )

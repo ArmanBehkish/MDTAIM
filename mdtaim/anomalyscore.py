@@ -10,7 +10,7 @@ from scipy.signal import find_peaks
 import matrixprofile as mpx
 from tqdm import tqdm
 from .config import Config
-from .utility import md_plot
+from .utility import md_plot, plot_plotly
 
 
 class AnomalyScoring(ABC):
@@ -202,6 +202,42 @@ class MatrixProfile(AnomalyScoring):
             name,
         )
 
+    def plot_plotly(
+        self,
+        title: str = "result",
+        save_plot: bool = True,
+        line_color: str = "gray",
+        label_type: Optional[str] = "normal",
+        show_plot: bool = True,
+        labels: np.ndarray = np.empty((0, 0), dtype=np.float64),
+    ):
+        """Ploting the data in a nice way"""
+
+        plot_config = self.config.get_config()["plot"]
+        subplot_size = plot_config["subplot_size"]
+
+        if self.mps is None or labels is None:
+            self.logger.error("Matrix profile and Labels not Provided or Loaded!")
+            raise ValueError("Data or labels are not loaded!")
+
+        message = f"{title} - LABEL TYPE: {label_type} - SHAPE: {self.mps.shape}"
+
+        mps = self.mps.T
+
+        plot_plotly(
+            mps,
+            labels,
+            self.logger,
+            plot_config,
+            title,
+            message,
+            save_plot,
+            show_plot,
+            line_color,
+            name="MP",
+            subplot_size=subplot_size,
+        )
+
     def save_to_pickle(self, score: np.ndarray) -> None:
         """
         Save matrix profilescore to the pickle file
@@ -221,3 +257,17 @@ class MatrixProfile(AnomalyScoring):
             f.close()
 
         self.logger.info(f"matrix profile saved to file {file_path} successfully!")
+
+    def load_from_pickle(self) -> np.ndarray:
+        """
+        NOT USED IN THE CURRENT VERSION
+        Load matrix profile from the pickle file
+        """
+        data_config = self.config.get_config()["data"]
+        output_path = data_config["scores_path"]
+        file = next(os.scandir(output_path)).name
+        file_path = os.path.join(output_path, file)
+        with open(file_path, "rb") as f:
+            self.mps = pickle.load(f)
+            f.close()
+        return self.mps
