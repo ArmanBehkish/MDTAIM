@@ -2,7 +2,6 @@ itemset_mining_preparation:
   window_size: 10
   ignore_win_smaller_than: 0.5 # percentage of window size
   windowing_method: eucl_zero_shot  #implemented methods: mean-max, mean-std, mean-mean, energy, range, eucl_dist,eucl_zero_shot, n_peaks
-  enable_threshold_tuning: True # if True, use train part of data to 
   enable_threshold_tuning: True # if True, use train part of data to find the best threshold (zero-shot learning)
   train_size: 150
   threshold_tuning_step: 0.2 # start from one and step up by this
