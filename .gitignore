@@ -6,7 +6,9 @@ __pycache__/
 .pytest_cache
 notebooks/
 tests/
-logs/
-plots/
+logs/*
+!logs/.gitkeep
+plots/*
+!plots/.gitkeep
 mdtaim/__pycache__/
 .DS_Store
