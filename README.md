@@ -16,6 +16,7 @@
 - [🔍 About](#-about)
 - [🛠️ Installation](#️-installation)
 - [📊 Dataset](#-dataset)
+- [� Output](#-output)
 - [📝 Configuration](#-configuration)
 - [📚 Libraries](#-libraries)
 - [📚 Documentation](#-documentation)
@@ -78,9 +79,31 @@ You can try the live demo [here](https://demo-link.com) -->
 
 ## 📊 Dataset
 
-Dataset location: `data/input/raw/<dataset_name>`
-- create if doesn't exist
-- Put the CSV files of the dataset and the ground truth in this directory!
+_Dataset location_: `data/input/raw/<dataset_name>`
+- Create the path if doesn't exist
+- Put the CSV files of the dataset and the ground truth in the `data/input/raw/` directory under the dataset title/name which is also set in `dataset_title: toy` field in the configuration file!
+- Also set the names of the files and the ground truth type in the configuration file like this:
+
+```yaml
+data:
+  dataset_title: toy
+  dataset_file_name: toy_data.csv
+  dataset_gt_file_name: toy_data_GT.csv
+  ground_truth_type: range
+```
+
+## 📊 Output
+
+MDTAIM output includes the dimension numbers and location of N-dimensional anomalies (also the importance score if the algorithms outputs utility). 
+_MDTAIM Output location_: `data/output/final/...`  
+
+Raw SPMF algorithm outputs are saved in :
+_SPMF AlgorithmsOutput location_: `data/output/spmf/...`
+
+The processed directory includes the intermediate files that can be used to debug.
+_Processed data location_: `data/processed/...`
+
+Create the paths if doesn't exist!
 
 
 ## 📝 Configuration
