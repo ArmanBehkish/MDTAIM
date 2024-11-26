@@ -3,10 +3,13 @@
 
 
 [![Python Version](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
+[![Matrix Profile](https://img.shields.io/badge/matrixprofile-1.1.10-blue?style=flat)](https://pypi.org/project/matrixprofile/)
+[![SPMF](https://img.shields.io/badge/spmf-2.62-blue?style=flat)](https://www.philippe-fournier-viger.com/spmf/)
 [![GitHub stars](https://img.shields.io/github/stars/armanbehkish/mdtaim)](https://github.com/armanbehkish/mdtaim/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/armanbehkish/mdtaim)](https://github.com/armanbehkish/mdtaim/network)
 [![GitHub issues](https://img.shields.io/github/issues/armanbehkish/mdtaim)](https://github.com/armanbehkish/mdtaim/issues)
 [![GitHub license](https://img.shields.io/github/license/armanbehkish/mdtaim)](https://github.com/armanbehkish/mdtaim/blob/master/LICENSE)
+
 
 <!-- omit in toc -->
 ## TABLE OF CONTENTS
