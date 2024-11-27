@@ -12,7 +12,7 @@ from mdtaim.postprocess import PostProcess
 
 class Pipeline:
     """
-    Pipeline for the MDTAIM pipeline
+    Pipeline class to streamline the MDTAIM execution
     """
 
     def __init__(self, dataset_title: str) -> None:

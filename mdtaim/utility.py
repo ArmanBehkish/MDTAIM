@@ -79,7 +79,11 @@ def clear_old_log_files(config_path: str) -> None:
         config = yaml.safe_load(f)
 
     log_dir = config.get("logging", {}).get("log_dir", "./logs/")
-    for file in os.listdir(log_dir):
+    # if the log directory is empty
+    log_files = [f for f in os.listdir(log_dir) if f.endswith(".log")]
+    if not log_files:
+        return
+    for file in log_files:
         # if file date is before today, delete it
         if file.split("_")[1] < datetime.now().strftime("%Y%m%d"):
             os.remove(os.path.join(log_dir, file))

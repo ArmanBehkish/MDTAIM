@@ -135,12 +135,22 @@ class PostProcess:
         if not tid_enabled and high_util_enabled:
             # i.e., AprioriTID_Bitset and alike
             # find TIDS for each high utility itemset
+
             with open(spmf_output_f, "r") as s_f, open(tran_db_f, "r") as t_f:
                 for line in s_f:
-                    supp = line.split("#SUP:")[1].strip().split("#UTIL:")[0].strip()
-                    util = line.split("#UTIL:")[1].strip()
-                    dims = [x for x in line.split("#SUP:")[0].split(" ") if x]
-                    self.itemsets[frozenset(dims)] = [supp, util, []]
+                    # if the algorithm has support in output (e.g., CHUI-MinerMax):
+                    if "#SUP:" in line:
+                        supp = line.split("#SUP:")[1].strip().split("#UTIL:")[0].strip()
+                        util = line.split("#UTIL:")[1].strip()
+                        dims = [x for x in line.split("#SUP:")[0].split(" ") if x]
+                        self.itemsets[frozenset(dims)] = [supp, util, []]
+
+                    # if algorithm does not have support in output (e.g., EFIM):
+                    if "#SUP:" not in line:
+                        supp = None
+                        util = line.split("#UTIL:")[1].strip()
+                        dims = [x for x in line.split("#UTIL:")[0].split(" ") if x]
+                        self.itemsets[frozenset(dims)] = [supp, util, []]
 
                 for count, line in enumerate(t_f, start=1):
                     if line.split(":")[0].strip() == str(empty_trans_replacement):
