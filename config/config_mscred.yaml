@@ -12,14 +12,14 @@ itemset_mining_preparation:
   utility_function: max
   cons_trans_chk_for_merge: 5  # number of consecutive anomalies to check for merging (into one with higher utility)
 spmf:
-  algorithm: CHUI-MinerMax # from: Apriori, FPGrowth_itemsets,AprioriTID_Bitset,Eclat,dEclat,HMine,FIN,DFIN,NegFIN,PrePost+,PrePost,LCMFreq,AprioriClose,DCI_Closed,Charm_bitset,LCM,FPClose,NAFCP,NEclatClosed,FPMax,Charm_MFI,DefMe,Pascal,Zart,AprioriRare,Two-Phase,FHM, EFIM,CHUI-MinerMax,AprioriInverse,AprioriInverse_TID
+  algorithm: Apriori # from: Apriori, FPGrowth_itemsets,AprioriTID_Bitset,Eclat,dEclat,HMine,FIN,DFIN,NegFIN,PrePost+,PrePost,LCMFreq,AprioriClose,DCI_Closed,Charm_bitset,LCM,FPClose,NAFCP,NEclatClosed,FPMax,Charm_MFI,DefMe,Pascal,Zart,AprioriRare,Two-Phase,FHM, EFIM,CHUI-MinerMax,AprioriInverse,AprioriInverse_TID
   min_support: 0.5%
   max_support: 1% # for AprioriInverse
   min_support_count: 1 # for algos that expect integer support count
   max_pattern_length: 3
   min_pattern_length: 1
   show_transaction_ids: False  #for algorithms that return TIDs
-  high_utility_itemsets: True # For high utility mining algos
+  high_utility_itemsets: False # For high utility mining algos
   min_utility: 1 # for high utility mining algos
   empty_trans_replacement: 1000 # algos expect at least one item in each transaction
   sort_input_items: #  some algos require sorted items
