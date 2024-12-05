@@ -177,13 +177,10 @@ class PreprocessData:
             return labels_padded
 
     @staticmethod
-    def make_kd_labels(self, labels: np.ndarray, padded: bool = True) -> np.ndarray:
-        """Makes labels for KDPs"""
-        if labels is None:
-            if padded:
-                labels = self.padded_labels
-            else:
-                labels = self.labels
+    def make_kd_labels(labels: np.ndarray) -> np.ndarray:
+        """
+        Makes labels for K-Dimensional Anomalies, This is from KDP code and only used for simulating their result, not used in the current MDTAIM
+        """
         _, num_of_dims = labels.shape
         overall = np.sum(labels, axis=1)
         kda_gt = np.zeros_like(labels)
@@ -193,6 +190,40 @@ class PreprocessData:
             temp[temp >= i] = 1
             kda_gt[:, i - 1] = temp
         return kda_gt
+
+    @staticmethod
+    def make_label_dataframe(labels: np.ndarray) -> pd.DataFrame:
+        """
+        Creates a dataframe from the labels in the form of:
+        KDA, Location, dim_count
+        0,1    206,226         2
+        """
+        kda_df = pd.DataFrame()
+        kda_iterator = enumerate(labels)
+
+        for count, row in kda_iterator:
+            sum_row = np.sum(row)
+            if sum_row == 0:
+                continue
+            else:
+                num_dims = sum_row
+                dim_numbers = [i for i in range(len(row)) if row[i] == 1]
+                end_idx = count
+                anom_len = 0
+                while end_idx < len(labels) and np.sum(labels[end_idx]) == sum_row:
+                    end_idx += 1
+                    anom_len += 1
+                end_idx -= 1
+                location = ",".join(str(x) for x in [count, end_idx])
+                kda = ",".join(sorted(str(x) for x in dim_numbers))
+                new_row = pd.DataFrame(
+                    {"KDA": [kda], "Location": [location], "dim_count": [num_dims]}
+                )
+                kda_df = pd.concat([kda_df, new_row], ignore_index=True)
+                for _ in range(anom_len):
+                    next(kda_iterator, None)
+
+        return kda_df
 
     def cal_anomaly_rate(self, lables: np.ndarray) -> float:
         """percentage of ones to the whole series"""

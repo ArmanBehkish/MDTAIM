@@ -59,7 +59,7 @@ class KDP:
             self.logger.error("KDP profile and Labels not Provided or Loaded!")
             raise ValueError("Data or labels are not loaded!")
 
-        kd_labels = PreprocessData.make_kd_labels(self, labels)
+        kd_labels = PreprocessData.make_kd_labels(labels)
         name = "KDP"
 
         md_plot(
@@ -98,7 +98,7 @@ class KDP:
             self.logger.error("KDP profile and Labels not Provided or Loaded!")
             raise ValueError("Data or labels are not loaded!")
 
-        kd_labels = PreprocessData.make_kd_labels(self, labels)
+        kd_labels = PreprocessData.make_kd_labels(labels)
         message = f"{title} - LABEL TYPE: {label_type} - SHAPE: {self.kdps.shape}"
         kdps = self.kdps.T
 

@@ -216,10 +216,8 @@ class PostProcess:
         self,
         title: str = "MDTAIM",
         save_plot: bool = True,
-        line_color: str = "gray",
-        label_type: Optional[str] = "normal",
         show_plot: bool = True,
-        labels: np.ndarray = np.empty((0, 0), dtype=np.float64),
+        labels_df: pd.DataFrame = pd.DataFrame(),
     ):
         itemset_config = self.config.get_config()["itemset_mining_preparation"]
         spmf_config = self.config.get_config()["spmf"]
@@ -228,9 +226,9 @@ class PostProcess:
         plot_config = self.config.get_config()["plot"]
         win_size = itemset_config["window_size"]
         title = (
-            dataset_title
-            + " - "
-            + "Multidimensional Anomalies along with their Locations and relative importance."
+            dataset_title.upper()
+            + " Dataset - "
+            + "Triangles represent Multidimensional Anomalies Found, Lines represent Dataset Labels."
         )
         box_size = 50
 
@@ -254,64 +252,140 @@ class PostProcess:
         df["dim_count"] = df["KDA"].str.count(",") + 1
         df = df.sort_values(["dim_count"], ascending=[False])
 
-        self.logger.debug(f"data frame created for heatmap: {df}\n")
+        # create combined list of KDAs from labels and results so that they can be shown together/compared in the plot
+        def kda_to_set(kda_str):
+            return set(map(str.strip, kda_str.split(",")))
 
-        # Create the heatmap using a scatter plot with square markers
+        all_kdas = []
+        for kda in labels_df["KDA"]:
+            all_kdas.append((kda, kda_to_set(kda)))
+
+        for kda in df["KDA"]:
+            kda_set = kda_to_set(kda)
+            if kda not in [x[0] for x in all_kdas]:
+                for i, (existing_kda, existing_set) in enumerate(all_kdas):
+                    if kda_set.issubset(existing_set):
+                        all_kdas.insert(i + 1, (kda, kda_set))
+                        break
+                    elif kda_set.issuperset(existing_set):
+                        all_kdas.insert(i, (kda, kda_set))
+                        break
+                else:
+                    all_kdas.append((kda, kda_set))
+
+        ordered_kdas = [x[0] for x in all_kdas]
+
+        # create text colors adaptive based on marker color
+        min_imp = df["Importance"].min()
+        max_imp = df["Importance"].max()
+        df["norm_imp"] = (df["Importance"] - min_imp) / (max_imp - min_imp)
+
+        self.logger.debug(f"results dataframe created for heatmap:\n {df}\n")
+        self.logger.debug(f"labels dataframe from heatmap function:\n {labels_df}\n")
+        self.logger.debug(f"combinedordered_kdas: {ordered_kdas}")
+
+        # Create the heatmap using a scatter plot with triangle markers
         fig = go.Figure()
 
-        if not high_util_enabled:
-            fig.add_trace(
-                go.Scatter(
-                    x=df["Location"],
-                    y=df["KDA"],
-                    mode="markers",
-                    marker=dict(
-                        size=box_size,
-                        color="black",
-                        symbol="triangle-down",
-                    ),
-                    showlegend=False,
+        # Add traces for results
+        for i, row in df.iterrows():
+            # parse coordinates for each kda from df
+            kda = row["KDA"]
+            location = row["Location"]
+            importance = round(row["Importance"], 1)
+            text_color = "black" if row["norm_imp"] > 0.5 else "white"
+            kda_index = ordered_kdas.index(kda)
+            # add some offset to lift triangles above the line
+            y_position = kda_index + 3 * (box_size / 1000)
+
+            if not high_util_enabled:
+                # for frequent itemsets results
+                fig.add_trace(
+                    go.Scatter(
+                        x=[location],
+                        y=[y_position],
+                        mode="markers",
+                        marker=dict(
+                            size=box_size,
+                            color="black",
+                            symbol="triangle-down",
+                        ),
+                        showlegend=False,
+                    )
                 )
-            )
 
-        if high_util_enabled:
-            # create text colors adaptive based on marker color
-            min_imp = df["Importance"].min()
-            max_imp = df["Importance"].max()
-            df["norm_imp"] = (df["Importance"] - min_imp) / (max_imp - min_imp)
-            text_colors = ["black" if x > 0.5 else "white" for x in df["norm_imp"]]
+            if high_util_enabled:
 
-            # Add scatter plot with text labels
+                # for high utility itemsets results
+                fig.add_trace(
+                    go.Scatter(
+                        x=[location],
+                        y=[y_position],
+                        mode="markers+text",
+                        text=importance,
+                        textposition="middle center",
+                        textfont=dict(
+                            color=text_color,
+                            size=12,
+                        ),
+                        marker=dict(
+                            size=box_size,
+                            color=[importance],
+                            cmin=min_imp,
+                            cmax=max_imp,
+                            colorscale="Viridis",
+                            showscale=(i == 0),
+                            # showscale=True,
+                            colorbar=dict(title="Importance"),
+                            symbol="triangle-down",
+                        ),
+                        showlegend=False,
+                    )
+                )
+
+        # Add traces for label intervals
+        for _, row in labels_df.iterrows():
+            # parse coordinates for each kda from labels_df
+            kda = row["KDA"]
+            loc_start, loc_end = map(int, row["Location"].split(","))
+            kda_index = ordered_kdas.index(kda)
+
+            # for label intervals
             fig.add_trace(
                 go.Scatter(
-                    x=df["Location"],
-                    y=df["KDA"],
-                    mode="markers+text",
-                    text=df["Importance"].round(1),
-                    textposition="middle center",
-                    textfont=dict(
-                        color=text_colors,
-                        size=12,
-                    ),
-                    marker=dict(
-                        size=box_size,
-                        color=df["Importance"],
-                        colorscale="Viridis",
-                        showscale=True,
-                        colorbar=dict(title="Importance"),
-                        symbol="triangle-down",
-                    ),
+                    x=[loc_start, loc_end],
+                    y=[kda_index, kda_index],
+                    mode="lines+markers",
+                    marker=dict(color="brown", size=6, symbol="circle"),
+                    line=dict(color="brown", width=2),
                     showlegend=False,
                 )
             )
 
         fig.update_layout(
-            title=title,
-            xaxis_title="Location",
+            title=dict(
+                text=title,
+                x=0.5,
+                xanchor="center",
+                yanchor="top",
+                font=dict(
+                    size=20,
+                    color="black",
+                    family="Arial",
+                ),
+            ),
             yaxis=dict(
-                ticktext=df["KDA"].tolist(),
-                tickvals=list(range(len(df))),
-                title="KDA",
+                ticktext=ordered_kdas,
+                tickvals=list(range(len(ordered_kdas))),
+                title=dict(
+                    text="KDA",
+                    font=dict(
+                        size=16,
+                        color="black",
+                        family="Arial",
+                        weight="bold",
+                    ),
+                ),
                 showticklabels=True,
                 automargin=True,
                 side="left",
@@ -319,8 +393,19 @@ class PostProcess:
                 ticklabelposition="outside",
                 tickangle=0,
             ),
-            xaxis=dict(side="bottom"),
-            height=max(400, 150 * len(df)),
+            xaxis=dict(
+                side="bottom",
+                title=dict(
+                    text="LOCATION",
+                    font=dict(
+                        size=16,
+                        color="black",
+                        family="Arial",
+                        weight="bold",
+                    ),
+                ),
+            ),
+            height=max(600, 150 * len(labels_df)),
         )
 
         if show_plot:

@@ -175,4 +175,7 @@ class Pipeline:
         """
         postprocess_obj = PostProcess(self.config_obj, self.logger_obj)
         postprocess_obj.produce_output()
-        postprocess_obj.plot_heatmap()
+
+        kda_label_df = PreprocessData.make_label_dataframe(self.padded_labels)
+
+        postprocess_obj.plot_heatmap(labels_df=kda_label_df)
