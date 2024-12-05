@@ -15,8 +15,9 @@
 ## TABLE OF CONTENTS
 - [🔍 About](#-about)
 - [🛠️ Installation](#️-installation)
-- [📊 Dataset](#-dataset)
-- [� Output](#-output)
+- [📊 Daatset](#-daatset)
+- [📊 Output](#-output)
+- [📈 Plots](#-plots)
 - [📝 Configuration](#-configuration)
 - [📚 Libraries](#-libraries)
 - [📚 Documentation](#-documentation)
@@ -77,7 +78,7 @@ result = obj.do_something()
 
 You can try the live demo [here](https://demo-link.com) -->
 
-## 📊 Dataset
+## 📊 Daatset
 
 _Dataset location_: `data/input/raw/<dataset_name>`
 - Create the path if doesn't exist
@@ -104,6 +105,19 @@ The processed directory includes the intermediate files that can be used to debu
 _Processed data location_: `data/processed/...`
 
 Create the paths if doesn't exist!
+
+## 📈 Plots
+
+Each step of the pipeline outputs the associated plots in the `plots/` directory. This is the list of plots (for the toy dataset) to be consulted to better understand each step of the pipeline:
+- The input dataset:
+<img src="docs/images/toy.png" alt="Dataset Visualization">
+- the matrix profile scores with padded labels:
+<img src="docs/images/toy_mp_padded.png" alt="Matrix Profile Scores">
+- the kdp (from TSADIS to compare):
+<img src="docs/images/toy_kdp.png" alt="KDP">
+- MDTAIM multidimensional anomalies along with the exact dimensions and relative importance:
+<img src="docs/images/toy_heatmap.png" alt="Multidimensional Anomalies">
+
 
 
 ## 📝 Configuration
