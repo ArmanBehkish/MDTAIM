@@ -55,12 +55,12 @@ block-beta
   blockArrowId9<["Plots"]>(right) space space  
   blockArrowId10<["MDTAIM Outputs"]>(down) space space space 
 
-  classDef rightarrow fill:#696,stroke:#333;
-  classDef mainblocks fill:#333333;
-  classDef downarrow fill:#369;
+  classDef rightarrow fill:#8cb369,stroke:#28112b;
+  classDef mainblocks fill:#f2e9e4,stroke:#28112b;
+  classDef downarrow fill:#81c3d7,stroke:#28112b;
   class blockArrowId1,blockArrowId5,blockArrowId3,blockArrowId9 rightarrow
   class Data_Preprocessing,Anomaly_Scoring,KDP,Anomaly_to_Transactions,Itemset_Mining,Postprocessing  mainblocks
-  class blockArrowId2,blockArrowId4,blockArrowId7,blockArrowId10 downarrow
+  class blockArrowId2,blockArrowId4,blockArrowId7,blockArrowId8,blockArrowId10 downarrow
 ```
 
 
