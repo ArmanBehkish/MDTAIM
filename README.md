@@ -14,6 +14,7 @@
 <!-- omit in toc -->
 ## TABLE OF CONTENTS
 - [🔍 About](#-about)
+- [Architecture](#architecture)
 - [🛠️ Installation](#️-installation)
 - [📊 Daatset](#-daatset)
 - [📊 Output](#-output)
@@ -30,6 +31,38 @@
 ## 🔍 About
 
 This repository is an implementation of a research done to detect multi-dimensional time-series anomalies using a novel method. It builds on top of existing anomaly detection scoring funcitons (Primarily matrix profile) and leveragtes the output as transactions to mine frequent itemsets. We try to investigate the possibility of using current efficient frequent itemset mining algorithms as a fast way to detect multi-dimensional anomalies.
+
+## Architecture
+
+This is the High level Architecture of MDTAIM:
+
+```mermaid
+block-beta
+  columns 4
+  Data_Preprocessing
+  blockArrowId1<["Plots"]>(right) space space  
+  blockArrowId2<["Data + Labels"]>(down)   space space space  
+  Anomaly_Scoring
+  blockArrowId3<["Plots"]>(right) space space 
+  blockArrowId4<["Matrix Profile Scores"]>(down) space space space 
+  KDP
+  blockArrowId5<["Plots"]>(right) space space 
+  Anomaly_to_Transactions space space space 
+  blockArrowId7<["Transaction Database"]>(down) space space space 
+  Itemset_Mining space space space 
+  blockArrowId8<["Frequent/High Utility Itemsets"]>(down) space space space 
+  Postprocessing
+  blockArrowId9<["Plots"]>(right) space space  
+  blockArrowId10<["MDTAIM Outputs"]>(down) space space space 
+
+  classDef rightarrow fill:#696,stroke:#333;
+  classDef mainblocks fill:#333333;
+  classDef downarrow fill:#369;
+  class blockArrowId1,blockArrowId5,blockArrowId3,blockArrowId9 rightarrow
+  class Data_Preprocessing,Anomaly_Scoring,KDP,Anomaly_to_Transactions,Itemset_Mining,Postprocessing  mainblocks
+  class blockArrowId2,blockArrowId4,blockArrowId7,blockArrowId10 downarrow
+```
+
 
 ## 🛠️ Installation
 
