@@ -328,7 +328,13 @@ def plot_plotly(
     fig.update_layout(
         plot_bgcolor=subplot_bgcolor,
         height=data.shape[0] * subplot_size,
-        title=message,
+        title={
+            "text": message.replace("\n", "<br>"),
+            "x": 0.5,  # Center the title
+            "xanchor": "center",
+            "yanchor": "top",
+            "font": {"size": 16},
+        },
     )
     if show_plot:
         fig.show()
