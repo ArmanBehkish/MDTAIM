@@ -2,8 +2,8 @@ from mdtaim.pipeline import Pipeline
 
 
 def main():
-    ### Set the dataset title: "toy" or "mscred"
-    dataset_title = "mscred"
+    ### Set the dataset title: "toy" or "mscred" or "pvsystem"
+    dataset_title = "pvsystem"
     ###
 
     pipeline = Pipeline(dataset_title)
