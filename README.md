@@ -14,7 +14,7 @@
 <!-- omit in toc -->
 ## TABLE OF CONTENTS
 - [🔍 About](#-about)
-- [Architecture](#architecture)
+- [🔌 Architecture](#-architecture)
 - [🛠️ Installation](#️-installation)
 - [📊 Daatset](#-daatset)
 - [📊 Output](#-output)
@@ -32,7 +32,7 @@
 
 This repository is an implementation of a research done to detect multi-dimensional time-series anomalies using a novel method. It builds on top of existing anomaly detection scoring funcitons (Primarily matrix profile) and leveragtes the output as transactions to mine frequent itemsets. We try to investigate the possibility of using current efficient frequent itemset mining algorithms as a fast way to detect multi-dimensional anomalies.
 
-## Architecture
+## 🔌 Architecture
 
 This is the High level Architecture of MDTAIM:
 
@@ -248,6 +248,11 @@ logging:
 plot:
   output_path: ./plots/
   subplot_size: 160
+  show_dataset: True
+  show_matrixprofile: False
+  show_kdp: False
+  show_detected_anomalies_vs_gt: False
+  show_final_output: True
 ```
 
 ## 📚 Libraries
