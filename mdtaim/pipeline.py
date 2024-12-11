@@ -41,6 +41,7 @@ class Pipeline:
         data_obj = PreprocessData(self.logger_obj, self.config_obj)
         data_obj.load_data()
         self.data, self.labels = data_obj.get_data_and_labels()
+        show_dataset = self.config_obj.get_config()["plot"]["show_dataset"]
 
         data_obj.plot(title=self.dataset_title, label_type="normal", show_plot=False)
         self.logger_obj.info(
@@ -52,7 +53,7 @@ class Pipeline:
         data_obj.plot_plotly(
             title=self.dataset_title,
             label_type="padded",
-            show_plot=False,
+            show_plot=show_dataset,
             save_plot=True,
         )
 
@@ -87,12 +88,14 @@ class Pipeline:
             show_plot=False,
         )
 
+        show_mp = self.config_obj.get_config()["plot"]["show_matrixprofile"]
+
         mp_obj.plot_plotly(
             title=f"{self.dataset_title}_MATRIX_PROFILE",
             save_plot=True,
             line_color="blue",
             label_type="padded",
-            show_plot=False,
+            show_plot=show_mp,
             labels=self.padded_labels,
         )
 
@@ -122,12 +125,14 @@ class Pipeline:
             show_plot=False,
         )
 
+        show_kdp = self.config_obj.get_config()["plot"]["show_kdp"]
+
         kdp_obj.plot_plotly(
             title=f"{self.dataset_title}_KDP",
             line_color="brown",
             label_type="padded",
             labels=self.padded_labels,
-            show_plot=False,
+            show_plot=show_kdp,
         )
 
     def convert_anomalies_to_transactions(self) -> None:
@@ -145,6 +150,11 @@ class Pipeline:
 
         itemsetp_obj.print_transactions(to="logs")
         itemsetp_obj.cal_anomaly_detec_accuracy(self.padded_labels)
+
+        show_da = self.config_obj.get_config()["plot"]["show_detected_anomalies_vs_gt"]
+        itemsetp_obj.plot_detected_anomalies_vs_labels(
+            self.padded_labels, show_plot=show_da
+        )
 
         itemsetp_obj.transactions.save_transactions_to_file()
 
@@ -178,4 +188,5 @@ class Pipeline:
 
         kda_label_df = PreprocessData.make_label_dataframe(self.padded_labels)
 
-        postprocess_obj.plot_heatmap(labels_df=kda_label_df)
+        show_fo = self.config_obj.get_config()["plot"]["show_final_output"]
+        postprocess_obj.plot_heatmap(labels_df=kda_label_df, show_plot=show_fo)
