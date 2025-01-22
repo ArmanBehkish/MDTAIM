@@ -30,6 +30,52 @@ class PreprocessData:
         """
         data_config = self.config.get_config()["data"]
         # load the dataset
+
+        # if dataset is 1D, and data and labels are in single file,
+        # one col data, one col label
+        if (
+            data_config["data_gt_single_file"]
+            and data_config["one_dimensional_dataset"]
+        ):
+            try:
+                data_path = os.path.join(
+                    data_config["dataset_path"], data_config["dataset_file_name"]
+                )
+                df_data = pd.read_csv(data_path)
+                data = df_data.iloc[:, :-1].values
+                labels = df_data.iloc[:, -1].values
+
+                self.data = np.tile(data.reshape(-1, 1), (1, 2))
+                self.labels = np.tile(labels.reshape(-1, 1), (1, 2))
+
+                self.logger.debug(f"data shape: {self.data.shape}")
+                self.logger.debug(f"labels shape: {self.labels.shape}")
+
+            except FileNotFoundError:
+                self.logger.critical(f"dataset file not found: {data_path}")
+
+            return
+
+        # if the data and labels are in single file, last column is the label, other columns before are data
+        if data_config["data_gt_single_file"]:
+            try:
+                data_path = os.path.join(
+                    data_config["dataset_path"], data_config["dataset_file_name"]
+                )
+                df_data = pd.read_csv(data_path)
+                self.data = df_data.iloc[:, :-1].values
+                labels = df_data.iloc[:, -1].values
+
+                self.labels = np.tile(labels.reshape(-1, 1), (1, 5))
+
+                self.logger.debug(f"data shape: {self.data.shape}")
+                self.logger.debug(f"labels shape: {self.labels.shape}")
+
+            except FileNotFoundError:
+                self.logger.critical(f"dataset file not found: {data_path}")
+
+            return
+
         # if dataset file extension is .csv & first column is the index
         if data_config["dataset_file_name"].endswith(".csv"):
             try:

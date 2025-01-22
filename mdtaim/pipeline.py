@@ -66,6 +66,7 @@ class Pipeline:
         """
         Calculate the anomaly score (Matrix Profile)
         """
+        # After calculating Matrix Profile, It is saved in a file for later use! The scores returned by calculate_score() are truncated (if option set)
         mp_start_time = timeit.default_timer()
         mp_obj = MatrixProfile(self.logger_obj, self.config_obj)
         self.mp_scores = mp_obj.calculate_score(self.data)
@@ -103,6 +104,7 @@ class Pipeline:
         """
         Calculate the KDP
         """
+        # load MP from file if you want to calculate KDP on original MP
         kdp_start_time = timeit.default_timer()
         kdp_obj = KDP(self.logger_obj, self.config_obj)
         kdp_obj.fast_find_anomalies(self.mp_scores)
@@ -112,7 +114,7 @@ class Pipeline:
         self.logger_obj.info(
             bold(
                 green(
-                    f"KDP calculation done! total time to calculate KDP: {self.timers['kdp']:.3f} seconds"
+                    f"KDP calculation done! total time to calculate KDP: {self.timers['kdp']*1_000_000:.2f} µs"
                 )
             )
         )
@@ -140,23 +142,32 @@ class Pipeline:
         Convert Matrix Profile Discords to Transactions readable by SPMF
         """
         itemsetp_obj = ItemSetPreparation(self.logger_obj, self.config_obj)
-        itemsetp_obj.load_anomaly_scores()
+
+        # uncomment this to load MP scores from file, do the transformation on original scores.
+        # itemsetp_obj.load_anomaly_scores()
+
+        # uncomment this to do conversion on truncated scores.
+        itemsetp_obj.set_anomaly_scores(self.mp_scores)
 
         convert_start_time = timeit.default_timer()
         itemsetp_obj.convert_anomalies_to_transactions()
-        itemsetp_obj.transactions.merge_consecutive_anomalies()
         convert_end_time = timeit.default_timer()
         self.timers["convert"] = convert_end_time - convert_start_time
 
-        itemsetp_obj.print_transactions(to="logs")
-        itemsetp_obj.cal_anomaly_detec_accuracy(self.padded_labels)
-
-        show_da = self.config_obj.get_config()["plot"]["show_detected_anomalies_vs_gt"]
-        itemsetp_obj.plot_detected_anomalies_vs_labels(
-            self.padded_labels, show_plot=show_da
+        self.logger_obj.info(
+            f"time for conversion: {self.timers['convert']*1_000_000:.2f} µs"
         )
 
+        itemsetp_obj.build_transactions()
         itemsetp_obj.transactions.save_transactions_to_file()
+        itemsetp_obj.cal_anomaly_detec_accuracy(self.padded_labels)
+
+        show_detected = self.config_obj.get_config()["plot"][
+            "show_detected_anomalies_vs_gt"
+        ]
+        itemsetp_obj.plot_detected_anomalies_vs_labels(
+            self.padded_labels, show_detected
+        )
 
     def perform_itemset_mining(self) -> None:
         """

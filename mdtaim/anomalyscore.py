@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional
+from typing import Optional
 import copy as cp
 import os
 import logging
@@ -79,40 +79,69 @@ class MatrixProfile(AnomalyScoring):
     def __init__(self, logger: logging.Logger, config: Config) -> None:
         super().__init__(logger, config)
         self.mps: np.ndarray = np.empty((0, 0), dtype=np.float64)
+        self.file_path: str = ""
+        self.mp_seq_len: int = 0
 
     def calculate_score(self, data: np.ndarray) -> np.ndarray:
         """
         Calculates Matrix Profile of data
         Shape of the output is the same as the input data
+        The calculated Matrix Profile is saved in a pickle file!
+        The returend Matrix Profile is Quantile Corrected is option is set.
         """
+        data_config = self.config.get_config()["data"]
         mp_config = self.config.get_config()["anomalyscoring"]["matrixprofile"]
+        itemset_config = self.config.get_config()["itemset_mining_preparation"]
+        output_path = data_config["scores_path"]
+        ds_title = data_config["dataset_title"]
+        self.mp_seq_len = mp_config["subsequence_length"]
+        self.file_path = output_path + f"{ds_title}_mps_{self.mp_seq_len}.pkl"
+
+        # if MP already calculated for this dataset and window size
+        if os.path.exists(self.file_path):
+            self.logger.warning(
+                "Matrix profile already calculated for this dataset! Ignore MP calculation time."
+            )
+            with open(self.file_path, "rb") as f:
+                self.mps = pickle.load(f)
+                f.close()
+            if itemset_config["cut_baseline"]:
+                # cut baseline on loaded MP
+                q = itemset_config["quantile"]
+                self.mps = self.remove_baseline(self.mps, q)
+                self.logger.info(f"Baseline correction with quantile: {q} done!")
+            return self.mps
+
+        # mp_config = self.config.get_config()["anomalyscoring"]["matrixprofile"]
         mps = []
-        win_size = mp_config["subsequence_length"]
+        # win_size = mp_config["subsequence_length"]
 
         if np.ndim(data) == 1:
             if mp_config["auto_subsequence_length"]:
                 # calculate windows size
-                win_size = self.get_win(data)
+                self.mp_seq_len = self.get_win(data)
                 self.logger.info(
-                    f"estimated window size by median of distance between peaks: {win_size}"
+                    f"estimated window size by median of distance between peaks: {self.mp_seq_len}"
                 )
-            self.logger.info("calculating MPs with given window size: {win_size}")
+            self.logger.info(
+                "calculating MPs with given window size: {self.mp_seq_len}"
+            )
             # calculate matrix profile
-            profile = mpx.compute(data, win_size)["mp"]
+            profile = mpx.compute(data, self.mp_seq_len)["mp"]
             return np.asarray([profile]).T
 
         for i in tqdm(np.arange(data.shape[1]), desc="MP calculation"):
             current_ts = data[:, i]
             if mp_config["auto_subsequence_length"]:
-                win_size = self.get_win(current_ts)
+                self.mp_seq_len = self.get_win(current_ts)
                 self.logger.info(
-                    f"estimated window size for dimension {i} is: {win_size}"
+                    f"estimated window size for dimension {i} is: {self.mp_seq_len}"
                 )
             self.logger.debug(
-                f"calculating MP for dimension {i} with given window size: {win_size}"
+                f"calculating MP for dimension {i} with given window size: {self.mp_seq_len}"
             )
             # calculate matrix profile
-            profile = mpx.compute(current_ts, win_size)["mp"]
+            profile = mpx.compute(current_ts, self.mp_seq_len)["mp"]
             pad_size = len(current_ts) - len(profile)
             # pad calculated MP with its min val to the same length of TS
             profile = np.insert(profile, len(profile), [np.min(profile)] * pad_size)
@@ -122,7 +151,16 @@ class MatrixProfile(AnomalyScoring):
         self.logger.debug(
             f"matrix profile shape is: {self.mps.shape} and its header is: \n{self.mps[:5]}"
         )
+
+        # save MP to file
         self.save_to_pickle(self.mps)
+
+        # Cutting quntile(q) of MP if relevant option is set
+        if itemset_config["cut_baseline"]:
+            q = itemset_config["quantile"]
+            self.mps = self.remove_baseline(self.mps, q)
+            self.logger.info(f"Baseline correction with quantile: {q} done!")
+
         return self.mps
 
     def get_win(self, ts: np.ndarray) -> int:
@@ -220,7 +258,7 @@ class MatrixProfile(AnomalyScoring):
             self.logger.error("Matrix profile and Labels not Provided or Loaded!")
             raise ValueError("Data or labels are not loaded!")
 
-        message = f"{title} - LABEL TYPE: {label_type} - SHAPE: {self.mps.shape}"
+        message = f"{title} - MP_SUB_LEN: {self.mp_seq_len} LABEL: {label_type} - SHAPE: {self.mps.shape}"
 
         mps = self.mps.T
 
@@ -240,23 +278,26 @@ class MatrixProfile(AnomalyScoring):
 
     def save_to_pickle(self, score: np.ndarray) -> None:
         """
-        Save matrix profilescore to the pickle file
+        Save matrix profile scores to the pickle file
+        It should always save the pure scores, not baseline corrected
         """
-        data_config = self.config.get_config()["data"]
-        output_path = data_config["scores_path"]
-        file_path = output_path + "mps.pkl"
-        if not os.path.exists(output_path):
-            self.logger.error(f"output path {output_path} does not exist!")
-            raise FileNotFoundError
-        # remove old files in the output path
-        for file in os.listdir(output_path):
-            os.remove(os.path.join(output_path, file))
+        # if not os.path.exists(output_path):
+        #     self.logger.error(f"output path {output_path} does not exist!")
+        #     raise FileNotFoundError
 
-        with open(file_path, "wb") as f:
+        if os.path.exists(self.file_path):
+            self.logger.warning("Matrix profile already calculated for this dataset!")
+            return
+
+        # # remove old files in the output path
+        # for file in os.listdir(output_path):
+        #     os.remove(os.path.join(output_path, file))
+
+        with open(self.file_path, "wb") as f:
             pickle.dump(score, f)
             f.close()
 
-        self.logger.info(f"matrix profile saved to file {file_path} successfully!")
+        self.logger.info(f"matrix profile saved to file {self.file_path} successfully!")
 
     def load_from_pickle(self) -> np.ndarray:
         """
