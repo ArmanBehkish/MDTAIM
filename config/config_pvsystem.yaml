@@ -1,47 +1,44 @@
 itemset_mining_preparation:
-  window_size: 60
+  window_size: 100 # must be divisor of dataset size
   ignore_win_smaller_than: 0.5 # percentage of window size
-  windowing_method: energy  #implemented methods: mean-max, mean-std, mean-mean, energy, range, eucl_dist,eucl_zero_shot, n_peaks
-  enable_threshold_tuning: True # if True, use train part of data to find the best threshold (zero-shot learning)
-  train_size: 430
-  threshold_tuning_step: 0.2 # start from one and step up by this
-  custom_threshold: 2  # not used if threshold tuning is enabled
-  compare_to_train_for_detection: True  #use parameters (e.g., mean) calculated across train data as base as ooposed to the whole data
-  cut_baseline: False  # cut quantile of ....
-  quantile: 0.8
-  utility_function: sum  # implemented: max, sum
-  cons_trans_chk_for_merge: 4   # number of consecutive anomalies to check for merging (into one with higher utility)
+  windowing_method: beta1 #implemented methods: mean-max, mean-std, mean-mean, energy, range, eucl_dist,eucl_zero_shot, n_peaks
+  train_size: 0
+  custom_threshold: 0.5 # not used if threshold tuning is enabled
+  compare_to_train_for_detection: False
+  cut_baseline: True
+  quantile: 0.65
+  utility_function: max
 spmf:
-  algorithm: EFIM # from: Apriori, FPGrowth_itemsets,AprioriTID_Bitset,Eclat,dEclat,HMine,FIN,DFIN,NegFIN,PrePost+,PrePost,LCMFreq,AprioriClose,DCI_Closed,Charm_bitset,LCM,FPClose,NAFCP,NEclatClosed,FPMax,Charm_MFI,DefMe,Pascal,Zart,AprioriRare,Two-Phase,FHM, EFIM,CHUI-MinerMax,AprioriInverse,AprioriInverse_TID
+  algorithm: CHUI-MinerMax #from: Apriori, FPGrowth_itemsets,AprioriTID_Bitset,Eclat,dEclat,HMine,FIN,DFIN,NegFIN,PrePost+,PrePost,LCMFreq,AprioriClose,DCI_Closed,Charm_bitset,LCM,FPClose,NAFCP,NEclatClosed,FPMax,Charm_MFI,DefMe,Pascal,Zart,AprioriRare,Two-Phase,FHM, EFIM, D2HUP,FHM+,CHUI-MinerMax,AprioriInverse,AprioriInverse_TID
   min_support: 0.5%
   max_support: 1% # for AprioriInverse
   min_support_count: 1 # for algos that expect integer support count
-  max_pattern_length: 3
+  max_pattern_length: 6
   min_pattern_length: 1
-  show_transaction_ids: False  #for algorithms that return TIDs
+  show_transaction_ids: False #for algorithms that return TIDs
   high_utility_itemsets: True # For high utility mining algos
   min_utility: 1 # for high utility mining algos
-  empty_trans_replacement: 1000 # algos expect at least one item in each transaction
   sort_input_items: #  some algos require sorted items
-    enable: True 
+    enable: True
     ascending: True
-  replace_zero:   # some algos can only handle positive integers
-    enable: True 
-    replace_zero_with: 99
-  jar_file: ./lib/spmf.jar
-    
+  replace_zero: # some algos can only handle positive integers
+    enable: True
+    replace_zero_with: 1000
+  jar_file: ./lib/spmfe.jar
+
 anomalyscoring:
   which: matrixprofile
-  matrixprofile: 
-    subsequence_length: 60  # to calculate z-normalized Euclidean distance
+  matrixprofile:
+    subsequence_length: 100 # to calculate z-normalized Euclidean distance
     auto_subsequence_length: False # if True, the subsequence_length will not be used
   iForest:
-    num_trees: 100    
+    num_trees: 100
 data:
   dataset_title: pvsystem
   dataset_file_name: pvsystem_data.csv
   dataset_gt_file_name: pvsystem_GT.csv
   ground_truth_type: range # or "point" for each anomaly
+  data_gt_single_file: False
   dataset_path: ./data/raw/pvsystem/
   spmf_output_path: ./data/output/spmf/
   final_output_path: ./data/output/final/
@@ -49,7 +46,7 @@ data:
   transactions_path: ./data/processed/saved_transactions/
   scores_path: ./data/processed/saved_scores/
   transaction_db_path: ./data/processed/transaction_databases/
-  label_pad_size: 5
+  label_pad_size: 20
 logging:
   console_log_level: INFO
   log_dir: ./logs/
@@ -58,8 +55,7 @@ plot:
   output_path: ./plots/
   subplot_size: 50
   show_dataset: False
-  show_matrixprofile: True
-  show_kdp: True
-  show_detected_anomalies_vs_gt: True
-  show_final_output: True
-
+  show_matrixprofile: False
+  show_kdp: False
+  show_detected_anomalies_vs_gt: False
+  show_final_output: False

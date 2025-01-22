@@ -1,13 +1,14 @@
 itemset_mining_preparation:
-  window_size: 300 # must be divisor of dataset size
+  window_size: 200 # must be divisor of dataset size
   ignore_win_smaller_than: 0.5 # percentage of window size
   windowing_method: beta1 #implemented methods: mean-max, mean-std, mean-mean, energy, range, eucl_dist,eucl_zero_shot, n_peaks
-  train_size: 1000
+  train_size: 0
   custom_threshold: 0.5 # not used if threshold tuning is enabled
   compare_to_train_for_detection: False
   cut_baseline: True
-  quantile: 0.5
+  quantile: 0.65
   utility_function: max
+
 spmf:
   algorithm: CHUI-MinerMax #from: Apriori, FPGrowth_itemsets,AprioriTID_Bitset,Eclat,dEclat,HMine,FIN,DFIN,NegFIN,PrePost+,PrePost,LCMFreq,AprioriClose,DCI_Closed,Charm_bitset,LCM,FPClose,NAFCP,NEclatClosed,FPMax,Charm_MFI,DefMe,Pascal,Zart,AprioriRare,Two-Phase,FHM, EFIM, D2HUP,FHM+,CHUI-MinerMax,AprioriInverse,AprioriInverse_TID
   min_support: 0.5%
@@ -25,34 +26,35 @@ spmf:
     enable: True
     replace_zero_with: 1000
   jar_file: ./lib/spmfe.jar
+
 anomalyscoring:
   which: matrixprofile
   matrixprofile:
-    subsequence_length: 300 # to calculate z-normalized Euclidean distance
+    subsequence_length: 200 # to calculate z-normalized Euclidean distance
     auto_subsequence_length: False # if True, the subsequence_length will not be used
   iForest:
     num_trees: 100
 data:
-  dataset_title: MSCRED
-  dataset_file_name: MSCRED_data.csv
-  dataset_gt_file_name: MSCRED_GT.csv
+  dataset_title: Synth_vd_20k_200d_20a
+  dataset_file_name: data.csv
+  dataset_gt_file_name: gt.csv
   ground_truth_type: range # or "point" for each anomaly
   data_gt_single_file: False
-  dataset_path: ./data/raw/MSCRED/
+  dataset_path: ./data/raw/Synth_VD_20k_200d_20a
   spmf_output_path: ./data/output/spmf/
   final_output_path: ./data/output/final/
   processed_data_path: ./data/processed/
   transactions_path: ./data/processed/saved_transactions/
   scores_path: ./data/processed/saved_scores/
   transaction_db_path: ./data/processed/transaction_databases/
-  label_pad_size: 150
+  label_pad_size: 100
 logging:
   console_log_level: INFO
   log_dir: ./logs/
   log_file_prefix: dev
 plot:
   output_path: ./plots/
-  subplot_size: 50
+  subplot_size: 10
   show_dataset: False
   show_matrixprofile: False
   show_kdp: False
