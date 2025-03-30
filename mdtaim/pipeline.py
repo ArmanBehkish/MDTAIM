@@ -43,10 +43,10 @@ class Pipeline:
         self.data, self.labels = data_obj.get_data_and_labels()
         show_dataset = self.config_obj.get_config()["plot"]["show_dataset"]
 
-        data_obj.plot(title=self.dataset_title, label_type="normal", show_plot=False)
-        self.logger_obj.info(
-            "anomaly rate of labels:%s", data_obj.cal_anomaly_rate(self.labels)
-        )
+        # data_obj.plot(title=self.dataset_title, label_type="normal", show_plot=False)
+        # self.logger_obj.info(
+        #     "anomaly rate of labels:%s", data_obj.cal_anomaly_rate(self.labels)
+        # )
 
         self.padded_labels = data_obj.pad_labels()
 
@@ -81,14 +81,29 @@ class Pipeline:
             )
         )
 
-        mp_obj.plot(
-            title=f"{self.dataset_title}_MATRIX_PROFILE",
-            line_color="blue",
-            label_type="padded",
-            labels=self.padded_labels,
-            show_plot=False,
-        )
+        # mp_obj.plot(
+        #     title=f"{self.dataset_title}_MATRIX_PROFILE",
+        #     line_color="blue",
+        #     label_type="padded",
+        #     labels=self.padded_labels,
+        #     show_plot=True,
+        # )
 
+        # plot the single dimension of MP for tests
+        show_single_mp = self.config_obj.get_config()["plot"]["show_single_dim_mp"]
+        single_dim = self.config_obj.get_config()["plot"]["single_dim"]
+
+        if show_single_mp:
+            mp_obj.plot_single_ts(
+                labels=self.padded_labels,
+                dimension=single_dim,
+                title=f"{self.dataset_title}_MATRIX_PROFILE",
+                show_plot=True,
+                save_plot=False,
+                line_color="blue",
+            )
+
+        # plot the whole matrix profile
         show_mp = self.config_obj.get_config()["plot"]["show_matrixprofile"]
 
         mp_obj.plot_plotly(
@@ -150,7 +165,7 @@ class Pipeline:
         itemsetp_obj.set_anomaly_scores(self.mp_scores)
 
         convert_start_time = timeit.default_timer()
-        itemsetp_obj.convert_anomalies_to_transactions()
+        itemsetp_obj.convert_anomalies_to_transactions(self.padded_labels)
         convert_end_time = timeit.default_timer()
         self.timers["convert"] = convert_end_time - convert_start_time
 
@@ -160,7 +175,7 @@ class Pipeline:
 
         itemsetp_obj.build_transactions()
         itemsetp_obj.transactions.save_transactions_to_file()
-        itemsetp_obj.cal_anomaly_detec_accuracy(self.padded_labels)
+        itemsetp_obj.cal_anomaly_detec_accuracy(self.padded_labels, False)
 
         show_detected = self.config_obj.get_config()["plot"][
             "show_detected_anomalies_vs_gt"

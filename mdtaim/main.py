@@ -8,6 +8,7 @@ def main():
     # "Synth_vd_20k_10d_20a" or
     # "Synth_van_50k_20d_60a" or
     # "Synth_G_5k_15d_75a"
+    # "Thesis_example_1"
     # dataset_title = "mscred"
     dataset_title = "mscred"
     ###

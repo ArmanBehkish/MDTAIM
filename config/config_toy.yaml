@@ -2,15 +2,15 @@ itemset_mining_preparation:
   window_size: 10
   ignore_win_smaller_than: 0.5 # percentage of window size
   windowing_method: beta1 #implemented methods: mean-max, mean-std, mean-mean, energy, range, eucl_dist,eucl_zero_shot, n_peaks, beta1
-  enable_threshold_tuning: False # if True, use train part of data to find the best threshold (zero-shot learning)
   train_size: 100
-  threshold_tuning_step: 0.2 # start from one and step up by this
   custom_threshold: 0.5 # not used if threshold tuning is enabled
-  compare_to_train_for_detection: True #use parameters (e.g., mean) calculated across train data as base as ooposed to the whole data
   cut_baseline: True # cut quantile of ....
-  quantile: 0.65
+  quantile: 0.05
   utility_function: max # implemented: max, sum
-  cons_trans_chk_for_merge: 4 # number of consecutive anomalies to check for merging (into one with higher utility)
+  # enable_threshold_tuning: False # if True, use train part of data to find the best threshold (zero-shot learning)
+  # threshold_tuning_step: 0.2 # start from one and step up by this
+  # compare_to_train_for_detection: True #use parameters (e.g., mean) calculated across train data as base as ooposed to the whole data
+  # cons_trans_chk_for_merge: 4 # number of consecutive anomalies to check for merging (into one with higher utility)
 spmf:
   algorithm: LCM # from: Apriori, FPGrowth_itemsets,AprioriTID_Bitset,Eclat,dEclat,HMine,FIN,DFIN,NegFIN,PrePost+,PrePost,LCMFreq,AprioriClose,DCI_Closed,Charm_bitset,LCM,FPClose,NAFCP,NEclatClosed,FPMax,Charm_MFI,DefMe,Pascal,Zart,AprioriRare,Two-Phase,FHM, EFIM,CHUI-MinerMax,AprioriInverse,AprioriInverse_TID
   min_support: 0.5%
@@ -34,6 +34,9 @@ anomalyscoring:
   matrixprofile:
     subsequence_length: 10 # to calculate z-normalized Euclidean distance
     auto_subsequence_length: False # if True, the subsequence_length will not be used
+    save_scores: False # to save time for tests
+    cpu_cores: 8 # number of cpu cores to use
+    sample_pct: 1 # sample percentage for anytime case, use "1" for exact
   iForest:
     num_trees: 100
 data:
@@ -57,8 +60,8 @@ logging:
 plot:
   output_path: ./plots/
   subplot_size: 160
-  show_dataset: False
-  show_matrixprofile: False
-  show_kdp: False
-  show_detected_anomalies_vs_gt: False
+  show_dataset: True
+  show_matrixprofile: True
+  show_kdp: True
+  show_detected_anomalies_vs_gt: True
   show_final_output: False

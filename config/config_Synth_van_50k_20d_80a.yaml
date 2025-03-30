@@ -34,6 +34,8 @@ anomalyscoring:
   matrixprofile:
     subsequence_length: 200 # to calculate z-normalized Euclidean distance
     auto_subsequence_length: False # if True, the subsequence_length will not be used
+    cpu_cores: 8 # number of cpu cores to use
+    sample_pct: 1 # sample percentage for anytime, use "1" for exact
   iForest:
     num_trees: 100
 data:

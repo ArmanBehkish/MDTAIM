@@ -1,64 +1,67 @@
 itemset_mining_preparation:
-  window_size: 200 # must be divisor of dataset size
+  window_size: 10 # must be divisor of dataset size
   ignore_win_smaller_than: 0.5 # percentage of window size
-  windowing_method: beta1 #implemented methods: mean-max, mean-std, mean-mean, energy, range, eucl_dist,eucl_zero_shot, n_peaks
+  windowing_method: mean-max #implemented methods: mean-max, mean-std, mean-mean, energy, range, eucl_dist,eucl_zero_shot, n_peaks
+  enable_threshold_tuning: True # if True, use train part of data to find the best threshold (zero-shot)
   train_size: 0
-  custom_threshold: 0.5 # not used if threshold tuning is enabled
+  threshold_tuning_step: 1
+  custom_threshold: 2.7 # not used if threshold tuning is enabled
   compare_to_train_for_detection: False
   cut_baseline: True
-  quantile: 0.65
+  quantile: 0.75
   utility_function: max
-
+  cons_trans_chk_for_merge: 15 # number of consecutive anomalies to check for merging (into one with higher utility)
 spmf:
-  algorithm: CHUI-MinerMax #from: Apriori, FPGrowth_itemsets,AprioriTID_Bitset,Eclat,dEclat,HMine,FIN,DFIN,NegFIN,PrePost+,PrePost,LCMFreq,AprioriClose,DCI_Closed,Charm_bitset,LCM,FPClose,NAFCP,NEclatClosed,FPMax,Charm_MFI,DefMe,Pascal,Zart,AprioriRare,Two-Phase,FHM, EFIM, D2HUP,FHM+,CHUI-MinerMax,AprioriInverse,AprioriInverse_TID
+  algorithm: FPMax #from: Apriori, FPGrowth_itemsets,AprioriTID_Bitset,Eclat,dEclat,HMine,FIN,DFIN,NegFIN,PrePost+,PrePost,LCMFreq,AprioriClose,DCI_Closed,Charm_bitset,LCM,FPClose,NAFCP,NEclatClosed,FPMax,Charm_MFI,DefMe,Pascal,Zart,AprioriRare,Two-Phase,FHM, EFIM,CHUI-MinerMax,AprioriInverse,AprioriInverse_TID
   min_support: 0.5%
   max_support: 1% # for AprioriInverse
   min_support_count: 1 # for algos that expect integer support count
-  max_pattern_length: 6
+  max_pattern_length: 3
   min_pattern_length: 1
   show_transaction_ids: False #for algorithms that return TIDs
-  high_utility_itemsets: True # For high utility mining algos
+  high_utility_itemsets: False # For high utility mining algos
   min_utility: 1 # for high utility mining algos
+  empty_trans_replacement: 1000 # algos expect at least one item in each transaction
   sort_input_items: #  some algos require sorted items
     enable: True
     ascending: True
   replace_zero: # some algos can only handle positive integers
     enable: True
-    replace_zero_with: 1000
-  jar_file: ./lib/spmfe.jar
+    replace_zero_with: 99
+  jar_file: ./lib/spmf.jar
 
 anomalyscoring:
   which: matrixprofile
   matrixprofile:
-    subsequence_length: 200 # to calculate z-normalized Euclidean distance
+    subsequence_length: 10 # to calculate z-normalized Euclidean distance
     auto_subsequence_length: False # if True, the subsequence_length will not be used
     cpu_cores: 8 # number of cpu cores to use
     sample_pct: 1 # sample percentage for anytime, use "1" for exact
   iForest:
     num_trees: 100
 data:
-  dataset_title: Synth_vd_20k_200d_20a
-  dataset_file_name: data.csv
+  dataset_title: diff_types_1
+  dataset_file_name: 1.csv
   dataset_gt_file_name: gt.csv
   ground_truth_type: range # or "point" for each anomaly
-  data_gt_single_file: False
-  dataset_path: ./data/raw/Synth_VD_20k_200d_20a
+  data_gt_single_file: True # if true, the gt_file_name is not read
+  dataset_path: ./data/raw/Diff_Anomaly_Types
   spmf_output_path: ./data/output/spmf/
   final_output_path: ./data/output/final/
   processed_data_path: ./data/processed/
   transactions_path: ./data/processed/saved_transactions/
   scores_path: ./data/processed/saved_scores/
   transaction_db_path: ./data/processed/transaction_databases/
-  label_pad_size: 100
+  label_pad_size: 5
 logging:
   console_log_level: INFO
   log_dir: ./logs/
   log_file_prefix: dev
 plot:
   output_path: ./plots/
-  subplot_size: 10
-  show_dataset: False
-  show_matrixprofile: False
+  subplot_size: 50
+  show_dataset: True
+  show_matrixprofile: True
   show_kdp: False
-  show_detected_anomalies_vs_gt: False
+  show_detected_anomalies_vs_gt: True
   show_final_output: False

@@ -1,22 +1,24 @@
 itemset_mining_preparation:
-  window_size: 500 # must be divisor of dataset size
+  window_size: 374 # must be divisor of dataset size
   ignore_win_smaller_than: 0.5 # percentage of window size
-  windowing_method: beta1 #implemented methods: mean-max, mean-std, mean-mean, energy, range, eucl_dist,eucl_zero_shot, n_peaks
-  train_size: 0
+  windowing_method: beta1 # beta1, mean_sigma, energy
+  train_size: 30000
+  warm_up: True # for setting baseline, e.g., mean, std
+  param_search: False # for param grid search on validation set
+  validation_size: 52000
   custom_threshold: 0.5 # not used if threshold tuning is enabled
-  compare_to_train_for_detection: False
   cut_baseline: True
-  quantile: 0.75
+  quantile: 0.73
   utility_function: max
 spmf:
-  algorithm: CHUI-MinerMax #from: Apriori, FPGrowth_itemsets,AprioriTID_Bitset,Eclat,dEclat,HMine,FIN,DFIN,NegFIN,PrePost+,PrePost,LCMFreq,AprioriClose,DCI_Closed,Charm_bitset,LCM,FPClose,NAFCP,NEclatClosed,FPMax,Charm_MFI,DefMe,Pascal,Zart,AprioriRare,Two-Phase,FHM, EFIM, D2HUP,FHM+,CHUI-MinerMax,AprioriInverse,AprioriInverse_TID
+  algorithm: FPMax #from: Apriori, FPGrowth_itemsets,AprioriTID_Bitset,Eclat,dEclat,HMine,FIN,DFIN,NegFIN,PrePost+,PrePost,LCMFreq,AprioriClose,DCI_Closed,Charm_bitset,LCM,FPClose,NAFCP,NEclatClosed,FPMax,Charm_MFI,DefMe,Pascal,Zart,AprioriRare,Two-Phase,FHM, EFIM, D2HUP,FHM+,CHUI-MinerMax,AprioriInverse,AprioriInverse_TID
   min_support: 0.5%
   max_support: 1% # for AprioriInverse
   min_support_count: 1 # for algos that expect integer support count
   max_pattern_length: 6
   min_pattern_length: 1
   show_transaction_ids: False #for algorithms that return TIDs
-  high_utility_itemsets: True # For high utility mining algos
+  high_utility_itemsets: False # For high utility mining algos
   min_utility: 1 # for high utility mining algos
   sort_input_items: #  some algos require sorted items
     enable: True
@@ -29,10 +31,13 @@ spmf:
 anomalyscoring:
   which: matrixprofile
   matrixprofile:
-    subsequence_length: 500 # to calculate z-normalized Euclidean distance
+    subsequence_length: 340 # to calculate z-normalized Euclidean distance
     auto_subsequence_length: False # if True, the subsequence_length will not be used
+    save_scores: False # to save time for tests
+    cpu_cores: 8 # number of cpu cores to use
+    sample_pct: 1 # sample percentage for anytime, use "1" for exact
   iForest:
-    num_trees: 100
+    num_trees: 0
 data:
   dataset_title: MGAB
   dataset_file_name: MGAB_data.csv
@@ -46,7 +51,7 @@ data:
   transactions_path: ./data/processed/saved_transactions/
   scores_path: ./data/processed/saved_scores/
   transaction_db_path: ./data/processed/transaction_databases/
-  label_pad_size: 250
+  label_pad_size: 100
 logging:
   console_log_level: INFO
   log_dir: ./logs/
@@ -55,7 +60,9 @@ plot:
   output_path: ./plots/
   subplot_size: 50
   show_dataset: False
-  show_matrixprofile: False
+  show_matrixprofile: True
+  show_single_dim_mp: False
+  single_dim: 2
   show_kdp: False
-  show_detected_anomalies_vs_gt: False
+  show_detected_anomalies_vs_gt: True
   show_final_output: False

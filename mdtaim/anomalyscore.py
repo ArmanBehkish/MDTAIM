@@ -5,9 +5,11 @@ import os
 import logging
 import pickle
 import numpy as np
+import stumpy
 from sklearn.preprocessing import MinMaxScaler
 from scipy.signal import find_peaks
 import matrixprofile as mpx
+import stumpy.stump
 from tqdm import tqdm
 from .config import Config
 from .utility import md_plot, plot_plotly
@@ -94,11 +96,15 @@ class MatrixProfile(AnomalyScoring):
         itemset_config = self.config.get_config()["itemset_mining_preparation"]
         output_path = data_config["scores_path"]
         ds_title = data_config["dataset_title"]
+        auto_size = mp_config["auto_subsequence_length"]
         self.mp_seq_len = mp_config["subsequence_length"]
+        self.n_jobs = mp_config["cpu_cores"]
+        self.sample_pct = mp_config["sample_pct"]
+        self.save_scores = mp_config["save_scores"]
         self.file_path = output_path + f"{ds_title}_mps_{self.mp_seq_len}.pkl"
 
         # if MP already calculated for this dataset and window size
-        if os.path.exists(self.file_path):
+        if os.path.exists(self.file_path) and not auto_size:
             self.logger.warning(
                 "Matrix profile already calculated for this dataset! Ignore MP calculation time."
             )
@@ -117,7 +123,7 @@ class MatrixProfile(AnomalyScoring):
         # win_size = mp_config["subsequence_length"]
 
         if np.ndim(data) == 1:
-            if mp_config["auto_subsequence_length"]:
+            if auto_size:
                 # calculate windows size
                 self.mp_seq_len = self.get_win(data)
                 self.logger.info(
@@ -126,13 +132,25 @@ class MatrixProfile(AnomalyScoring):
             self.logger.info(
                 "calculating MPs with given window size: {self.mp_seq_len}"
             )
+
             # calculate matrix profile
-            profile = mpx.compute(data, self.mp_seq_len)["mp"]
+            profile = mpx.compute(
+                data, self.mp_seq_len, sample_pct=self.sample_pct, n_jobs=self.n_jobs
+            )["mp"]
+
+            # test of prescrimp
+            # profile = mpx.algorithms.prescrimp(
+            #     data,
+            #     self.mp_seq_len,
+            #     step_size=0.5,
+            #     n_jobs=self.n_jobs,
+            # )["mp"]
+
             return np.asarray([profile]).T
 
         for i in tqdm(np.arange(data.shape[1]), desc="MP calculation"):
             current_ts = data[:, i]
-            if mp_config["auto_subsequence_length"]:
+            if auto_size:
                 self.mp_seq_len = self.get_win(current_ts)
                 self.logger.info(
                     f"estimated window size for dimension {i} is: {self.mp_seq_len}"
@@ -140,8 +158,23 @@ class MatrixProfile(AnomalyScoring):
             self.logger.debug(
                 f"calculating MP for dimension {i} with given window size: {self.mp_seq_len}"
             )
+
             # calculate matrix profile
-            profile = mpx.compute(current_ts, self.mp_seq_len)["mp"]
+            profile = mpx.compute(
+                current_ts,
+                self.mp_seq_len,
+                sample_pct=self.sample_pct,
+                n_jobs=self.n_jobs,
+            )["mp"]
+
+            # test of prescrimp
+            # profile = mpx.algorithms.prescrimp(
+            #     current_ts,
+            #     self.mp_seq_len,
+            #     step_size=0.5,
+            #     n_jobs=self.n_jobs,
+            # )["mp"]
+
             pad_size = len(current_ts) - len(profile)
             # pad calculated MP with its min val to the same length of TS
             profile = np.insert(profile, len(profile), [np.min(profile)] * pad_size)
@@ -153,7 +186,8 @@ class MatrixProfile(AnomalyScoring):
         )
 
         # save MP to file
-        self.save_to_pickle(self.mps)
+        if self.save_scores:
+            self.save_to_pickle(self.mps)
 
         # Cutting quntile(q) of MP if relevant option is set
         if itemset_config["cut_baseline"]:
@@ -312,3 +346,48 @@ class MatrixProfile(AnomalyScoring):
             self.mps = pickle.load(f)
             f.close()
         return self.mps
+
+    def plot_single_ts(
+        self,
+        labels: np.ndarray,
+        dimension: int = 0,
+        title: str = "Single Time Series",
+        show_plot: bool = True,
+        save_plot: bool = False,
+        line_color: str = "blue",
+    ) -> None:
+        """
+        Plot a single time series from the data array using the specified dimension.
+        """
+        import matplotlib.pyplot as plt
+        import numpy as np
+        from mdtaim.utility import md_plot
+
+        plot_config = self.config.get_config()["plot"]
+
+        data = self.mps
+
+        # Extract the single time series
+        if len(data.shape) > 1:
+            single_ts = data[:, dimension : dimension + 1]
+            single_labels = labels[:, dimension : dimension + 1]
+        else:
+            single_ts = data.reshape(-1, 1)
+            single_labels = labels.reshape(-1, 1)
+
+        # Create the plot
+        md_plot(
+            data=single_ts,
+            labels=single_labels,
+            logger=self.logger,
+            plot_config=plot_config,
+            title=title,
+            save_plot=save_plot,
+            show_plot=show_plot,
+            line_color=line_color,
+            name=f"TS-{dimension}",
+        )
+
+        self.logger.info(
+            f"Single time series (dimension {dimension}) plotted successfully."
+        )

@@ -196,12 +196,13 @@ def md_plot(
                     anom[0] + idx_name,
                     anom[1] + idx_name,
                     facecolor=colors[i],
+                    # original was alpha=0.3, change to zero to make it transparent
                     alpha=0.3,
                 )
         if regimes is not None:
             for ii in regimes:
                 ax.axvspan(
-                    ii[0] + idx_name, ii[1] + idx_name, facecolor="gray", alpha=0.3
+                    ii[0] + idx_name, ii[1] + idx_name, facecolor="grey", alpha=0.3
                 )
         if each_tag_thrs is not None:
             ax.axhline(
