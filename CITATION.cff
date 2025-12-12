@@ -20,9 +20,8 @@ keywords:
   - matrix profile
   - SPMF
   - machine learning
-license: "All Rights Reserved"
 version: "1.0.0"
-date-released: "2025-04-11"
+date-released: "2025-12-12"
 references:
   - type: thesis
     authors:
