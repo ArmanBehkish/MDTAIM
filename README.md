@@ -14,23 +14,43 @@
 <!-- omit in toc -->
 ## TABLE OF CONTENTS
 - [🔍 About](#-about)
+- [👤 Authorship \& Citation](#-authorship--citation)
+  - [How to Cite](#how-to-cite)
 - [🔌 Architecture](#-architecture)
 - [🛠️ Installation](#️-installation)
-- [📊 Daatset](#-daatset)
+- [📊 Dataset](#-dataset)
 - [📊 Output](#-output)
+  - [CLI Output Example](#cli-output-example)
 - [📈 Plots](#-plots)
 - [📝 Configuration](#-configuration)
 - [📚 Libraries](#-libraries)
 - [📚 Documentation](#-documentation)
 - [📜 License](#-license)
-- [👏 Acknowledgments](#-acknowledgments)
 - [📧 Contact](#-contact)
-- [📊 Project Status](#-project-status)
 
 
 ## 🔍 About
 
 This repository is an implementation of a research done to detect multi-dimensional time-series anomalies using a novel method. It builds on top of existing anomaly detection scoring funcitons (Primarily matrix profile) and leveragtes the output as transactions to mine frequent itemsets. We try to investigate the possibility of using current efficient frequent itemset mining algorithms as a fast way to detect multi-dimensional anomalies.
+
+## 👤 Authorship & Citation
+
+**Author**: Arman Behkish
+**Affiliation**: Politecnico di Torino
+**Supervisor**: Prof. Luca Cagliero
+
+This repository contains the implementation of the Master's thesis:
+**"Multivariate Anomaly Detection Using Frequent Itemset Mining"**
+Politecnico di Torino, 2025
+
+**Thesis Document**: [https://webthesis.biblio.polito.it/35359/](https://webthesis.biblio.polito.it/35359/)
+**Embargo Period**: The thesis is under embargo until **11 April 2026**
+
+### How to Cite
+
+If you reference this work, please cite the thesis. GitHub will display citation formats (APA, BibTeX) via the "Cite this repository" button in the sidebar, or you can use the information from the [CITATION.cff](CITATION.cff) file.
+
+**Important**: This code is provided under a restrictive license. Please review the [LICENSE](LICENSE) file before any use. The code may not be used in academic publications, commercial products, or derivative works without explicit permission.
 
 ## 🔌 Architecture
 
@@ -111,7 +131,7 @@ result = obj.do_something()
 
 You can try the live demo [here](https://demo-link.com) -->
 
-## 📊 Daatset
+## 📊 Dataset
 
 _Dataset location_: `data/input/raw/<dataset_name>`
 - Create the path if doesn't exist
@@ -139,6 +159,44 @@ _Processed data location_: `data/processed/...`
 
 Create the paths if doesn't exist!
 
+### CLI Output Example
+
+CLI output of the program on the pvsystem dataset:
+
+```
+2025-12-12 15:12:00,999 - mdtaim.utility - load_config - INFO - Config loaded successfully!
+2025-12-12 15:12:01,031 - mdtaim.utility - load_data - INFO - dataset pvsystem_data.csv loaded successfully!
+2025-12-12 15:12:01,069 - mdtaim.utility - load_data - INFO - ground truth pvsystem_GT.csv loaded successfully!
+2025-12-12 15:12:02,838 - mdtaim.utility - load_data - INFO - anomaly rate of padded labels: 0.048494882600842865
+MP calculation:   0%|          | 0/22 [00:00<?, ?it/s]MP calculation: 100%|██████████| 22/22 [00:00<00:00, 304.60it/s]
+2025-12-12 15:12:02,949 - mdtaim.utility - calculate_score - INFO - Baseline correction with quantile: 0.65 done!
+2025-12-12 15:12:02,949 - mdtaim.utility - cal_anomaly_score - INFO - MP calculation done! total time to calculate Matrix Profile: 0.085 seconds
+2025-12-12 15:12:09,316 - mdtaim.utility - plot_single_ts - INFO - Single time series (dimension 20) plotted successfully.
+2025-12-12 15:12:10,060 - mdtaim.utility - cal_kdp - INFO -  KDP calculation done! total time to calculate KDP: 2030.09 µs
+2025-12-12 15:12:12,830 - mdtaim.utility - convert_anomalies_to_transactions - INFO - Converting anomalies to transactions using beta1 method!
+2025-12-12 15:12:12,837 - mdtaim.utility - convert_beta_1 - INFO - Time taken: 6173.55 µs
+2025-12-12 15:12:12,837 - mdtaim.utility - convert_anomalies_to_transactions - INFO - time for conversion: 7117.59 µs
+2025-12-12 15:12:12,838 - mdtaim.utility - build_transactions - INFO - 3 transactions were created successfully!
+2025-12-12 15:12:12,839 - mdtaim.utility - save_transactions_to_file - INFO - current transactions saved to pickle successfully!
+2025-12-12 15:12:12,841 - mdtaim.utility - cal_anomaly_detec_accuracy - INFO - number of matches: number of matches: 9 out of 9 detected anomalies for 9 labels
+2025-12-12 15:12:12,841 - mdtaim.utility - cal_anomaly_detec_accuracy - INFO - Precision: 1.0, Recall: 1.0, F1 Score: 1.0
+2025-12-12 15:12:13,561 - mdtaim.utility - load_transactions_from_file - INFO - transaction DB loaded successfully!
+2025-12-12 15:12:13,563 - mdtaim.utility - prepare_transaction_database - INFO - Transaction DB written to file successfully!
+2025-12-12 15:12:14,049 - mdtaim.utility - check_java_version - INFO - Found Java version: 23, going on...
+2025-12-12 15:12:14,061 - mdtaim.utility - run_algorithm - INFO - Running SPMF: NegFIN algorithm with the command java -jar ./lib/spmfe.jar run NegFIN ./data/processed/transaction_databases/context.txt ./data/output/spmf/NegFIN_pvsystem_out.txt 0.5%...
+2025-12-12 15:12:14,334 - mdtaim.utility - run_algorithm - INFO - SPMF Output:
+>/Volumes/develop/MsThesis/MDTAIM/lib/spmfe.jar
+========== negFIN - STATS ============
+ Minsup = 1
+ Number of transactions: 3
+ Number of frequent  itemsets: 64
+ Total time ~: 2169 μs
+ Max memory:9.627677917480469 MB
+=====================================
+
+2025-12-12 15:12:14,334 - mdtaim.utility - perform_itemset_mining - INFO - MP conversion to transactions took 0.009 seconds and SPMF execution took 0.492 seconds
+```
+
 ## 📈 Plots
 
 Each step of the pipeline outputs the associated plots in the `plots/` directory. This is the list of plots (for the toy dataset) to be consulted to better understand each step of the pipeline:
@@ -148,8 +206,6 @@ Each step of the pipeline outputs the associated plots in the `plots/` directory
 <img src="docs/images/toy_mp_padded.png" alt="Matrix Profile Scores">
 - the kdp (from TSADIS to compare):
 <img src="docs/images/toy_kdp.png" alt="KDP">
-- MDTAIM multidimensional anomalies along with the exact dimensions and relative importance:
-<img src="docs/images/toy_heatmap.png" alt="Multidimensional Anomalies">
 
 
 
@@ -277,24 +333,20 @@ We use [MATRIX PROFILE](https://matrixprofile.docs.matrixprofile.org/index.html)
 
 ## 📜 License
 
-<!-- This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. -->
+**Copyright (c) 2025 Arman Behkish. All Rights Reserved.**
 
-## 👏 Acknowledgments
+This software is provided under a **restrictive proprietary license**. The code is provided for viewing and educational purposes only.
 
-<!-- - Person/Library 1 for [what they did]
-- Person/Library 2 for [what they did] -->
+**Prohibited without written permission:**
+- Copying, modifying, or redistributing the code
+- Using the code or algorithms in academic publications
+- Using the code in commercial or industrial products
+- Creating derivative works
+
+**Note**: The thesis document on the university portal is licensed under [CC BY-NC-ND 3.0](https://creativecommons.org/licenses/by-nc-nd/3.0/), while this code repository has a separate, more restrictive license.
+
+See the [LICENSE](LICENSE) file for complete terms.
 
 ## 📧 Contact
 
 - Email -  [arman dot behkish at gmail dot com]
-
-
-<!-- ## 🗺️ Roadmap
-
-- [x] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3 -->
-
-## 📊 Project Status
-
-Project is: _in progress_
