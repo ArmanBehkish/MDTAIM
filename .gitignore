@@ -12,3 +12,4 @@ plots/*
 !plots/.gitkeep
 mdtaim/__pycache__/
 .DS_Store
+.backup_original_code/
