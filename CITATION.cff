@@ -22,25 +22,11 @@ keywords:
   - machine learning
 version: "1.0.0"
 date-released: "2025-12-12"
-references:
-  - type: thesis
-    authors:
-      - family-names: "Behkish"
-        given-names: "Arman"
-    title: "Multivariate Anomaly Detection Using Frequent Itemset Mining"
-    institution:
-      name: "Politecnico di Torino"
-    thesis-type: "Master's Thesis"
-    year: 2025
-    url: "https://webthesis.biblio.polito.it/35359/"
 preferred-citation:
-  type: thesis
+  type: generic
   authors:
     - family-names: "Behkish"
       given-names: "Arman"
   title: "Multivariate Anomaly Detection Using Frequent Itemset Mining"
-  institution:
-    name: "Politecnico di Torino"
-  thesis-type: "Master's Thesis"
   year: 2025
   url: "https://webthesis.biblio.polito.it/35359/"
