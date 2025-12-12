@@ -1,0 +1,65 @@
+Copyright (c) 2025 Arman Behkish. All Rights Reserved.
+
+ACADEMIC THESIS IMPLEMENTATION - RESTRICTIVE LICENSE
+
+This software repository (MDTAIM) contains the implementation of the Master's thesis:
+"Multivariate Anomaly Detection Using Frequent Itemset Mining"
+Politecnico di Torino, 2025
+Supervisor: Prof. Luca Cagliero
+
+The thesis document is available at: https://webthesis.biblio.polito.it/35359/
+The thesis is under embargo until: 11 April 2026
+
+================================================================================
+                                TERMS OF USE
+================================================================================
+
+1. VIEWING ONLY
+   You may view and read the source code for personal educational purposes only.
+
+2. PROHIBITED USES
+   Without explicit prior written permission from the copyright holder, you may NOT:
+
+   a) COPY, REPRODUCE, OR CLONE this repository or any portion of its contents
+
+   b) MODIFY, ADAPT, OR CREATE DERIVATIVE WORKS based on this code
+
+   c) DISTRIBUTE, PUBLISH, OR SHARE this code in any form
+
+   d) USE THIS CODE OR ITS ALGORITHMS IN ACADEMIC PUBLICATIONS, including but
+      not limited to journal articles, conference papers, theses, dissertations,
+      technical reports, or preprints
+
+   e) USE THIS CODE IN COMMERCIAL OR INDUSTRIAL APPLICATIONS, products, or
+      services
+
+   f) INCORPORATE this code or its methods into other software projects
+
+   g) USE this code for machine learning training data or AI model development
+
+3. ACADEMIC INTEGRITY
+   This code represents original research. Using this implementation or its
+   novel methods in academic work without proper authorization constitutes
+   academic misconduct and may violate institutional policies.
+
+4. CITATION REQUIREMENT
+   Any reference to this work in academic contexts must properly cite the
+   original thesis. See CITATION.cff for citation information.
+
+5. PERMISSION REQUESTS
+   For permission to use this code beyond viewing, contact:
+   Arman Behkish - arman.behkish@gmail.com
+
+6. NO WARRANTY
+   THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED. THE COPYRIGHT HOLDER IS NOT LIABLE FOR ANY DAMAGES ARISING FROM
+   THE USE OR INABILITY TO USE THIS SOFTWARE.
+
+7. GOVERNING LAW
+   This license shall be governed by and construed in accordance with Italian
+   law and applicable international copyright treaties.
+
+================================================================================
+
+By accessing this repository, you acknowledge that you have read, understood,
+and agree to be bound by the terms of this license.
