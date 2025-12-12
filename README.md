@@ -14,8 +14,6 @@
 <!-- omit in toc -->
 ## TABLE OF CONTENTS
 - [🔍 About](#-about)
-- [👤 Authorship \& Citation](#-authorship--citation)
-  - [How to Cite](#how-to-cite)
 - [🔌 Architecture](#-architecture)
 - [🛠️ Installation](#️-installation)
 - [📊 Dataset](#-dataset)
@@ -24,33 +22,14 @@
 - [📈 Plots](#-plots)
 - [📝 Configuration](#-configuration)
 - [📚 Libraries](#-libraries)
-- [📚 Documentation](#-documentation)
+- [👤 Authorship \& Citation](#-authorship--citation)
+  - [How to Cite](#how-to-cite)
 - [📜 License](#-license)
-- [📧 Contact](#-contact)
 
 
 ## 🔍 About
 
 This repository is an implementation of a research done to detect multi-dimensional time-series anomalies using a novel method. It builds on top of existing anomaly detection scoring funcitons (Primarily matrix profile) and leveragtes the output as transactions to mine frequent itemsets. We try to investigate the possibility of using current efficient frequent itemset mining algorithms as a fast way to detect multi-dimensional anomalies.
-
-## 👤 Authorship & Citation
-
-**Author**: Arman Behkish
-**Affiliation**: Politecnico di Torino
-**Supervisor**: Prof. Luca Cagliero
-
-This repository contains the implementation of the Master's thesis:
-**"Multivariate Anomaly Detection Using Frequent Itemset Mining"**
-Politecnico di Torino, 2025
-
-**Thesis Document**: [https://webthesis.biblio.polito.it/35359/](https://webthesis.biblio.polito.it/35359/)
-**Embargo Period**: The thesis is under embargo until **11 April 2026**
-
-### How to Cite
-
-If you reference this work, please cite the thesis. GitHub will display citation formats (APA, BibTeX) via the "Cite this repository" button in the sidebar, or you can use the information from the [CITATION.cff](CITATION.cff) file.
-
-**Important**: This code is provided under a restrictive license. Please review the [LICENSE](LICENSE) file before any use. The code may not be used in academic publications, commercial products, or derivative works without explicit permission.
 
 ## 🔌 Architecture
 
@@ -315,21 +294,25 @@ plot:
 
 We use [MATRIX PROFILE](https://matrixprofile.docs.matrixprofile.org/index.html)  to extract anomaly scores and [SPMF](https://www.philippe-fournier-viger.com/spmf/) for varous itemset mining algorithms. Also, some code excerpts were used in the anomaly scoring module from the [TSADIS](https://sites.google.com/view/tsadis) project.  
  
- 
 
+## 👤 Authorship & Citation
 
-## 📚 Documentation
+**Author**: Arman Behkish
+**Affiliation**: Politecnico di Torino
+**Supervisor**: Prof. Luca Cagliero
 
-<!-- Check the comprehensive documentation at [documentation](link-to-docs). -->
+This repository contains the implementation of the Master's thesis:
+**"Multivariate Anomaly Detection Using Frequent Itemset Mining"**
+Politecnico di Torino, 2025
 
-<!-- ## 🤝 Contributing
+**Thesis Document**: [https://webthesis.biblio.polito.it/35359/](https://webthesis.biblio.polito.it/35359/)
+**Embargo Period**: The thesis is under embargo until **11 April 2026**
 
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/improvement`)
-3. Make your changes
-4. Commit your changes (`git commit -am 'Add new feature'`)
-5. Push to the branch (`git push origin feature/improvement`)
-6. Create a Pull Request -->
+### How to Cite
+
+If you reference this work, please cite the thesis. GitHub will display citation formats (APA, BibTeX) via the "Cite this repository" button in the sidebar, or you can use the information from the [CITATION.cff](CITATION.cff) file.
+
+**Important**: This code is provided under a restrictive license. Please review the [LICENSE](LICENSE) file before any use. The code may not be used in academic publications, commercial products, or derivative works without explicit permission.
 
 ## 📜 License
 
@@ -346,7 +329,3 @@ This software is provided under a **restrictive proprietary license**. The code 
 **Note**: The thesis document on the university portal is licensed under [CC BY-NC-ND 3.0](https://creativecommons.org/licenses/by-nc-nd/3.0/), while this code repository has a separate, more restrictive license.
 
 See the [LICENSE](LICENSE) file for complete terms.
-
-## 📧 Contact
-
-- Email -  [arman dot behkish at gmail dot com]
