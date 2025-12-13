@@ -1,15 +1,13 @@
-cff-version: 1.1.0
+cff-version: 1.2.0
 message: "If you reference this software, please cite the associated Master's thesis."
 type: software
 title: "MDTAIM: Multi-Dimensional Time-Series Anomaly Detection and Itemset Mining"
 abstract: "Implementation of a novel approach for multivariate anomaly detection using frequent itemset mining. This software is the implementation of a Master's thesis at Politecnico di Torino."
 authors:
-  - family-names: "Behkish"
-    given-names: "Arman"
-    email: "arman.behkish@gmail.com"
-    affiliation: "Politecnico di Torino"
-repository-code: "https://github.com/armanbehkish/mdtaim"
-url: "https://webthesis.biblio.polito.it/35359/"
+  - family-names: Behkish
+    given-names: Arman
+    email: arman.behkish@gmail.com
+    affiliation: Politecnico di Torino
 keywords:
   - anomaly detection
   - multivariate time series
@@ -17,13 +15,5 @@ keywords:
   - matrix profile
   - SPMF
   - machine learning
-version: "1.0.0"
-date-released: "2025-12-12"
-preferred-citation:
-  type: generic
-  authors:
-    - family-names: "Behkish"
-      given-names: "Arman"
-  title: "Multivariate Anomaly Detection Using Frequent Itemset Mining"
-  year: 2025
-  url: "https://webthesis.biblio.polito.it/35359/"
+version: 1.0.0
+date-released: 2025-12-12
