@@ -292,7 +292,7 @@ plot:
 
 ## 📚 Libraries
 
-We use [MATRIX PROFILE](https://matrixprofile.docs.matrixprofile.org/index.html)  to extract anomaly scores and [SPMF](https://www.philippe-fournier-viger.com/spmf/) for varous itemset mining algorithms. Also, some code excerpts were used in the anomaly scoring module from the [TSADIS](https://sites.google.com/view/tsadis) project.  
+We use [MATRIX PROFILE](https://www.cs.ucr.edu/~eamonn/MatrixProfile.html)  to extract anomaly scores and [SPMF](https://www.philippe-fournier-viger.com/spmf/) for various itemset mining algorithms. Also, some code excerpts were used in the anomaly scoring module from the [TSADIS](https://sites.google.com/view/tsadis) paper implementation.  
  
 
 ## 👤 Authorship & Citation
@@ -305,7 +305,7 @@ This repository contains the implementation of the Master's thesis:
 **"Multivariate Anomaly Detection Using Frequent Itemset Mining"**
 Politecnico di Torino, 2025
 
-**Thesis Document**: [https://webthesis.biblio.polito.it/35359/](https://webthesis.biblio.polito.it/35359/)
+**Thesis Document**: [https://webthesis.biblio.polito.it/35359/](https://webthesis.biblio.polito.it/35359/)  
 **Embargo Period**: The thesis is under embargo until **11 April 2026**
 
 ### How to Cite
